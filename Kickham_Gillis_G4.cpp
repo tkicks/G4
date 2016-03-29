@@ -20,13 +20,8 @@ using namespace std;
 /************************Globals******************************/
 
 static GLsizei width, height; // OpenGL window size.
-<<<<<<< HEAD
-float topBottomView;
+
 float z = 5.0;
-=======
-
-
->>>>>>> c57fd92fef36fd011644c31d8aac1186fce73b7f
 
 /*************************************************************/
 
