@@ -21,7 +21,7 @@ using namespace std;
 
 static GLsizei width, height; // OpenGL window size.
 float topBottomView;
-
+float z = 5.0;
 
 /*************************************************************/
 
@@ -46,12 +46,22 @@ Tree fractal;
 
 // Drawing routine.
 void drawScene(void)
-{  
-   glClear(GL_COLOR_BUFFER_BIT);
+{
+   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   glLoadIdentity ();
 
    // Define first viewport.
    float firstHeight= (height/2)-.3333*(height/2);
-   glViewport(0, 0, width, firstHeight); 
+   glViewport(0, 0, width, firstHeight);
+
+   glColor3f(1.0, 0.0, 0.0);
+   glBegin(GL_POLYGON);
+      glVertex3f(5.0, 5.0, -5.0);
+      glVertex3f(2.0, 5.0, -5.0);
+      glVertex3f(2.0, 2.0, -5.0);
+   glEnd();
+   glColor3f(0.0, 0.0, 0.0);
+
 
    
    /*-----------
@@ -59,11 +69,19 @@ void drawScene(void)
    */
 
 
+   glMatrixMode(GL_MODELVIEW);
+   gluLookAt (0.0, 0.0, z, 2.0, 3.5, 0.0, 0.0, 1.0, 0.0);
 
    float top=(height-firstHeight);
    // Define second viewport.
    glViewport(0, firstHeight, width, top);
    topBottomView = (height/2)+.3333*(height/2);
+
+   glBegin(GL_POLYGON);
+      glVertex3f(5.0, 5.0, -5.0);
+      glVertex3f(2.0, 5.0, -5.0);
+      glVertex3f(2.0, 2.0, -5.0);
+   glEnd();
 
    
    
@@ -71,8 +89,8 @@ void drawScene(void)
    glColor3f(0.0, 0.0, 0.0);
    glLineWidth(2.0);
    glBegin(GL_LINES);
-      glVertex3f(0, 0.1, 0.0);
-     glVertex3f(100.0,0.1, 0.0);
+      glVertex3f(-1.0, 0.0, 0.0);
+      glVertex3f(6.5, 0.0, 0.0);
    glEnd();
    glLineWidth(1.0);
 
@@ -91,7 +109,9 @@ void drawScene(void)
 // Initialization routine.
 void setup(void) 
 {
-   glClearColor(1.0, 1.0, 1.0, 0.0);  
+   glClearColor(1.0, 1.0, 1.0, 0.0);
+   glShadeModel (GL_FLAT);
+   glEnable (GL_DEPTH_TEST);
 }
 
 // OpenGL window reshape routine.
@@ -99,9 +119,8 @@ void resize(int w, int h)
 {
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   glOrtho(0.0, 100.0, 0.0, 100.0, -1.0, 1.0);
+   glFrustum (-1, 1, -1, 1, 1.5, 20.0);
    glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
 
    // Pass the size of the OpenGL window to globals.
    width = w;
@@ -115,23 +134,38 @@ void mouse (int button, int state, int x, int y)
       cout << "top\n";
    else
       cout << "bottom\n";
+}
 
+void keyboard (unsigned char key, int x, int y)
+{
+   switch (key) {
+      case '8': z = z + 1;
+      cout << "z = " << z << endl;
+                glutPostRedisplay ();
+                break;
+      case '2': z = z - 1;
+      cout << "z = " << z << endl;
+                glutPostRedisplay ();
+                break;
+      case 'q': exit (1);
+   }
 }
 
 // Main routine.
 int main(int argc, char **argv) 
 {
    glutInit(&argc, argv);
-   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); 
+   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
    glutInitWindowSize(500, 500);
-   glutInitWindowPosition(100, 100); 
-   glutCreateWindow("viewports.cpp");
-   setup(); 
-   glutDisplayFunc(drawScene); 
-   glutReshapeFunc(resize);  
+   glutInitWindowPosition(100, 100);
+   glutCreateWindow("Flowerly Fractal");
+   setup();
+   glutDisplayFunc(drawScene);
+   glutReshapeFunc(resize);
    glutMouseFunc(mouse);
-   glutMainLoop(); 
+   glutKeyboardFunc (keyboard);
+   glutMainLoop();
 
-   return 0;  
+   return 0;
 }
 
