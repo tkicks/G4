@@ -19,6 +19,7 @@ using namespace std;
 
 // Globals.
 static GLsizei width, height; // OpenGL window size.
+float topBottomView;
 
 // Drawing routine.
 void drawScene(void)
@@ -39,6 +40,7 @@ void drawScene(void)
    float top=(height-firstHeight);
    // Define second viewport.
    glViewport(0, firstHeight, width, top);
+   topBottomView = (height/2)+.3333*(height/2);
 
    
    
@@ -84,16 +86,13 @@ void resize(int w, int h)
 }
 
 // Keyboard input processing routine.
-void keyInput(unsigned char key, int x, int y)
+void mouse (int button, int state, int x, int y)
 {
-   switch (key) 
-   {
-      case 27:
-         exit(0);
-         break;
-      default:
-         break;
-   }
+   if (y < topBottomView)
+      cout << "top\n";
+   else
+      cout << "bottom\n";
+
 }
 
 // Main routine.
@@ -107,7 +106,7 @@ int main(int argc, char **argv)
    setup(); 
    glutDisplayFunc(drawScene); 
    glutReshapeFunc(resize);  
-   glutKeyboardFunc(keyInput);
+   glutMouseFunc(mouse);
    glutMainLoop(); 
 
    return 0;  
