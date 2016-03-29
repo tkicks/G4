@@ -47,10 +47,14 @@ Tree fractal;
 // Drawing routine.
 void drawScene(void)
 {
+   
    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glLoadIdentity ();
+
+   /*-----------
+   Bottom viewport....Menu goes here
+   */
    gluLookAt (0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-   // Define first viewport.
    float firstHeight= (height/2)-.3333*(height/2);
    glViewport(0, 0, width, firstHeight);
 
@@ -63,8 +67,7 @@ void drawScene(void)
    glColor3f(0.0, 0.0, 0.0);
 
 
-   float top=(height-firstHeight);
-   cout << "top " << top << " firstHeight " << firstHeight << endl;
+   // cout << "top " << top << " firstHeight " << firstHeight << endl;
    
    // A horizontal black line separates the viewports.
    // glColor3f(0.0, 0.0, 0.0);
@@ -75,17 +78,17 @@ void drawScene(void)
    // glEnd();
    // glLineWidth(1.0);
 
+   //--------------------------END MENU VIEWPORT---------------------------
 
-   
+
    /*-----------
-   Bottom viewport....Menu goes here
+   Top viewport...Fractal goes here
    */
 
-
+   float top=(height-firstHeight);
    glMatrixMode(GL_MODELVIEW);
    gluLookAt (0.0, 0.0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-   // Define second viewport.
    glViewport(0, firstHeight, width, top);
  
    glScissor(0, 0, width, firstHeight);
@@ -99,16 +102,7 @@ void drawScene(void)
       glVertex3f(2.0, 2.0, -5.0);
    glEnd();
 
-   
-
-
-   /*-----------
-   Top viewport...Fractal goes here
-   */
-
-
-
-   // End contents of second viewport.
+   //--------------------------END Fractal VIEWPORT---------------------------
 
    glFlush();
 }
