@@ -62,15 +62,15 @@ void drawScene(void)
    glEnd();
    glColor3f(0.0, 0.0, 0.0);
 
-   
+
    float top=(height-firstHeight);
    
    // A horizontal black line separates the viewports.
    glColor3f(0.0, 0.0, 0.0);
    glLineWidth(2.0);
    glBegin(GL_LINES);
-      glVertex3f(-1.0, top, 0.0);
-      glVertex3f(6.5, top, 0.0);
+      glVertex3f(-1.0, firstHeight/100, 0.0);
+      glVertex3f(6.5, firstHeight/100, 0.0);
    glEnd();
    glLineWidth(1.0);
 
