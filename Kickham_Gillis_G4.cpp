@@ -49,7 +49,7 @@ void drawScene(void)
 {
    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glLoadIdentity ();
-
+   gluLookAt (0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
    // Define first viewport.
    float firstHeight= (height/2)-.3333*(height/2);
    glViewport(0, 0, width, firstHeight);
@@ -62,6 +62,18 @@ void drawScene(void)
    glEnd();
    glColor3f(0.0, 0.0, 0.0);
 
+   
+   float top=(height-firstHeight);
+   
+   // A horizontal black line separates the viewports.
+   glColor3f(0.0, 0.0, 0.0);
+   glLineWidth(2.0);
+   glBegin(GL_LINES);
+      glVertex3f(-1.0, top, 0.0);
+      glVertex3f(6.5, top, 0.0);
+   glEnd();
+   glLineWidth(1.0);
+
 
    
    /*-----------
@@ -70,9 +82,8 @@ void drawScene(void)
 
 
    glMatrixMode(GL_MODELVIEW);
-   gluLookAt (0.0, 0.0, z, 2.0, 3.5, 0.0, 0.0, 1.0, 0.0);
+   gluLookAt (0.0, 0.0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-   float top=(height-firstHeight);
    // Define second viewport.
    glViewport(0, firstHeight, width, top);
  
@@ -84,15 +95,6 @@ void drawScene(void)
    glEnd();
 
    
-   
-   // A horizontal black line separates the viewports.
-   glColor3f(0.0, 0.0, 0.0);
-   glLineWidth(2.0);
-   glBegin(GL_LINES);
-      glVertex3f(-1.0, 0.0, 0.0);
-      glVertex3f(6.5, 0.0, 0.0);
-   glEnd();
-   glLineWidth(1.0);
 
 
    /*-----------
@@ -134,9 +136,9 @@ void mouse (int button, int state, int x, int y)
    float topBottomView= (height/2)+.3333*(height/2);
 
    if (y < topBottomView)
-      cout << "top\n";
+      cout << "top x: " << x/(float)width << "   y: " << y/(float)height << endl;
    else
-      cout << "bottom\n";
+      cout << "bottom: " << x/(float)width << "   y: " << y/(float)height << endl;
 }
 
 void keyboard (unsigned char key, int x, int y)
@@ -159,8 +161,8 @@ int main(int argc, char **argv)
 {
    glutInit(&argc, argv);
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-   glutInitWindowSize(500, 500);
-   glutInitWindowPosition(100, 100);
+   glutInitWindowSize(1000, 1000);
+   glutInitWindowPosition(100, 20);
    glutCreateWindow("Flowerly Fractal");
    setup();
    glutDisplayFunc(drawScene);
