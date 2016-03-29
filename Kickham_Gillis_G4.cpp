@@ -64,15 +64,16 @@ void drawScene(void)
 
 
    float top=(height-firstHeight);
+   cout << "top " << top << " firstHeight " << firstHeight << endl;
    
    // A horizontal black line separates the viewports.
-   glColor3f(0.0, 0.0, 0.0);
-   glLineWidth(2.0);
-   glBegin(GL_LINES);
-      glVertex3f(-1.0, firstHeight/100, 0.0);
-      glVertex3f(6.5, firstHeight/100, 0.0);
-   glEnd();
-   glLineWidth(1.0);
+   // glColor3f(0.0, 0.0, 0.0);
+   // glLineWidth(2.0);
+   // glBegin(GL_LINES);
+   //    glVertex3f(-100.0, top/1000, 0.0);
+   //    glVertex3f(6.5, top/1000, 0.0);
+   // glEnd();
+   // glLineWidth(1.0);
 
 
    
@@ -87,6 +88,10 @@ void drawScene(void)
    // Define second viewport.
    glViewport(0, firstHeight, width, top);
  
+   glScissor(0, 0, width, firstHeight);
+   glEnable(GL_SCISSOR_TEST);
+   glClearColor(0.5, 0.5, 0.5, 0.0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    glBegin(GL_POLYGON);
       glVertex3f(5.0, 5.0, -5.0);
@@ -132,13 +137,14 @@ void resize(int w, int h)
 // Mouse input processing routine.
 void mouse (int button, int state, int x, int y)
 {
-   
-   float topBottomView= (height/2)+.3333*(height/2);
+   if (state == GLUT_DOWN) {
+      float topBottomView= (height/2)+.3333*(height/2);
 
-   if (y < topBottomView)
-      cout << "top x: " << x/(float)width << "   y: " << y/(float)height << endl;
-   else
-      cout << "bottom: " << x/(float)width << "   y: " << y/(float)height << endl;
+      if (y < topBottomView)
+         cout << "top x: " << x/(float)width << "   y: " << y/(float)height << endl;
+      else
+         cout << "bottom: " << x/(float)width << "   y: " << y/(float)height << endl;
+   }
 }
 
 void keyboard (unsigned char key, int x, int y)
@@ -161,8 +167,8 @@ int main(int argc, char **argv)
 {
    glutInit(&argc, argv);
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-   glutInitWindowSize(1000, 1000);
-   glutInitWindowPosition(100, 20);
+   glutInitWindowSize(750, 750);
+   glutInitWindowPosition(100, 100);
    glutCreateWindow("Flowerly Fractal");
    setup();
    glutDisplayFunc(drawScene);
