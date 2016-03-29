@@ -17,9 +17,32 @@ using namespace std;
 
 using namespace std;
 
-// Globals.
+/************************Globals******************************/
+
 static GLsizei width, height; // OpenGL window size.
 float topBottomView;
+
+
+/*************************************************************/
+
+
+
+class Tree{
+
+public:
+    
+    Tree () {};  // constructor
+
+   
+};
+
+Tree fractal;
+
+/************************Class Methods***************************/
+
+
+
+/*****************************************************************/
 
 // Drawing routine.
 void drawScene(void)
@@ -85,7 +108,7 @@ void resize(int w, int h)
    height = h;
 }
 
-// Keyboard input processing routine.
+// Mouse input processing routine.
 void mouse (int button, int state, int x, int y)
 {
    if (y < topBottomView)
