@@ -20,7 +20,7 @@ using namespace std;
 /************************Globals******************************/
 
 static GLsizei width, height; // OpenGL window size.
-float topBottomView;
+
 
 
 /*************************************************************/
@@ -63,7 +63,7 @@ void drawScene(void)
    float top=(height-firstHeight);
    // Define second viewport.
    glViewport(0, firstHeight, width, top);
-   topBottomView = (height/2)+.3333*(height/2);
+ 
 
    
    
@@ -111,6 +111,9 @@ void resize(int w, int h)
 // Mouse input processing routine.
 void mouse (int button, int state, int x, int y)
 {
+   
+   float topBottomView= (height/2)+.3333*(height/2);
+
    if (y < topBottomView)
       cout << "top\n";
    else
