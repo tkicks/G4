@@ -54,9 +54,19 @@ void drawScene(void)
    /*-----------
    Bottom viewport....Menu goes here
    */
-   gluLookAt (0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
    float firstHeight= (height/2)-.3333*(height/2);
    glViewport(0, 0, width, firstHeight);
+
+   gluLookAt (0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+
+   glColor3f(0.5, 0.5, 0.5);
+   glBegin(GL_POLYGON);
+      glVertex3f(-100.0, -10.0, -6.0);
+      glVertex3f(100.0, -10.0, -6.0);
+      glVertex3f(100.0, firstHeight, -6.0);
+      glVertex3f(-100.0, firstHeight, -6.0);
+   glEnd();
 
    glColor3f(1.0, 0.0, 0.0);
    glBegin(GL_POLYGON);
@@ -90,11 +100,6 @@ void drawScene(void)
    gluLookAt (0.0, 0.0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
    glViewport(0, firstHeight, width, top);
- 
-   glScissor(0, 0, width, firstHeight);
-   glEnable(GL_SCISSOR_TEST);
-   glClearColor(0.5, 0.5, 0.5, 0.0);
-   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    glBegin(GL_POLYGON);
       glVertex3f(5.0, 5.0, -5.0);
