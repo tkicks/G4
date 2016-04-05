@@ -41,8 +41,9 @@ public:
     
     Tree () {};  // constructor
 
-    
-   
+    void readIn(char* inFilename);
+
+    vector<string> grammars;   
 };
 
 Tree fractal;
