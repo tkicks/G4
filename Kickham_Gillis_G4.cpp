@@ -10,9 +10,13 @@ Output: An openGL window displaying
 
 using namespace std;
 
-#include <stdio.h>
+// #include <stdio.h>
 #include <GL/glut.h>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <pthread.h>
 
 
 using namespace std;
@@ -28,6 +32,8 @@ static float Xangle = 0.0, Yangle = 0.0, Zangle = 0.0;
 /*************************************************************/
 
 
+void* simpleFunc(void*) { return NULL; }
+void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, NULL); }
 
 class Tree{
 
@@ -43,7 +49,27 @@ Tree fractal;
 
 /************************Class Methods***************************/
 
+void Tree::readIn(char* inFilename){
 
+   ifstream inFile (inFilename);
+   string line;
+   
+   if (inFile.is_open()) {
+   
+      cout << "open\n";
+      while ( getline (inFile,line) ){
+         grammars.push_back(line);
+      }
+
+
+   }
+
+   else{
+      cout<<"Input file could not be opened. Terminating..."<<endl;
+   }
+
+
+}
 
 
 /*****************************************************************/
@@ -194,6 +220,8 @@ void keyboard (unsigned char key, int x, int y)
 // Main routine.
 int main(int argc, char **argv) 
 {
+   char *filename = argv[1];
+   fractal.readIn(filename);
    glutInit(&argc, argv);
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
    glutInitWindowSize(750, 750);
