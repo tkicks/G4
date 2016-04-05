@@ -32,7 +32,6 @@ float z = 5.0;
 void* simpleFunc(void*) { return NULL; }
 void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, NULL); }
 
-
 class Tree{
 
 public:
@@ -45,6 +44,8 @@ public:
     vector<string> grammars;
    
 };
+
+Tree fractal;
 
 /************************Class Methods***************************/
 
@@ -69,10 +70,6 @@ void Tree::readIn(char* inFilename){
 
 
 }
-
-
-Tree fractal;
-
 
 
 /*****************************************************************/
