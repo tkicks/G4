@@ -13,7 +13,9 @@ using namespace std;
 #include <stdio.h>
 #include <GL/glut.h>
 #include <iostream>
-
+#include <fstream>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -33,12 +35,37 @@ public:
     
     Tree () {};  // constructor
 
+    void readIn(char* inFilename);
+
+
+    vector<string> grammars;
    
 };
 
 Tree fractal;
 
 /************************Class Methods***************************/
+
+void Tree::readIn(char* inFilename){
+
+   ifstream inFile (inFilename);
+   string line;
+   
+   if (inFile.is_open()) {
+   
+      while ( getline (inFile,line) ){
+         grammars.push_back(line);
+      }
+
+
+   }
+
+   else{
+      cout<<"Input file could not be opened. Terminating..."<<endl;
+   }
+
+
+}
 
 
 
@@ -47,46 +74,33 @@ Tree fractal;
 // Drawing routine.
 void drawScene(void)
 {
-   
-   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glLoadIdentity ();
 
+   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   
    /*-----------
    Bottom viewport....Menu goes here
    */
+
    float firstHeight= (height/2)-.3333*(height/2);
+
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+   glOrtho (-1, 1, -1, 1, -1, 1);
    glViewport(0, 0, width, firstHeight);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity (); 
 
-   gluLookAt (0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+   glColor3f (0.0, 0.0, 0.0);
+   glPointSize(6.0);
+   glBegin(GL_POINTS);
+      
+      for (float i = -1; i <= 1; i+=.01){
+         
+         glVertex3f(i,.9,0);
+      }
 
+   glEnd(); 
 
-   glColor3f(0.5, 0.5, 0.5);
-   glBegin(GL_POLYGON);
-      glVertex3f(-100.0, -10.0, -6.0);
-      glVertex3f(100.0, -10.0, -6.0);
-      glVertex3f(100.0, firstHeight, -6.0);
-      glVertex3f(-100.0, firstHeight, -6.0);
-   glEnd();
-
-   glColor3f(1.0, 0.0, 0.0);
-   glBegin(GL_POLYGON);
-      glVertex3f(5.0, 5.0, -5.0);
-      glVertex3f(2.0, 5.0, -5.0);
-      glVertex3f(2.0, 2.0, -5.0);
-   glEnd();
-   glColor3f(0.0, 0.0, 0.0);
-
-
-   // cout << "top " << top << " firstHeight " << firstHeight << endl;
-   
-   // A horizontal black line separates the viewports.
-   // glColor3f(0.0, 0.0, 0.0);
-   // glLineWidth(2.0);
-   // glBegin(GL_LINES);
-   //    glVertex3f(-100.0, top/1000, 0.0);
-   //    glVertex3f(6.5, top/1000, 0.0);
-   // glEnd();
-   // glLineWidth(1.0);
 
    //--------------------------END MENU VIEWPORT---------------------------
 
@@ -96,16 +110,21 @@ void drawScene(void)
    */
 
    float top=(height-firstHeight);
-   glMatrixMode(GL_MODELVIEW);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity ();
+   glFrustum (-1, 1, -1, 1, 1.5, 20.0);
    gluLookAt (0.0, 0.0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
    glViewport(0, firstHeight, width, top);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
 
-   glBegin(GL_POLYGON);
-      glVertex3f(5.0, 5.0, -5.0);
-      glVertex3f(2.0, 5.0, -5.0);
-      glVertex3f(2.0, 2.0, -5.0);
-   glEnd();
+   glColor3f (0.0, 0.0, 1.0);
+   glutWireTeapot (0.7);
+
+
+
+   glFlush ();
 
    //--------------------------END Fractal VIEWPORT---------------------------
 
