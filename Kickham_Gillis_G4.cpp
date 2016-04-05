@@ -25,7 +25,7 @@ using namespace std;
 
 static GLsizei width, height; // OpenGL window size.
 
-float z = 5.0;
+float z = 1.75;
 
 static float Xangle = 0.0, Yangle = 0.0, Zangle = 0.0;
 
@@ -43,6 +43,8 @@ public:
 
     void readIn(char* inFilename);
 
+    void drawLeaf(float centerX,float centerY,float centerZ);
+
     vector<string> grammars;   
 };
 
@@ -56,22 +58,30 @@ void Tree::readIn(char* inFilename){
    string line;
    
    if (inFile.is_open()) {
-   
       cout << "open\n";
       while ( getline (inFile,line) ){
          grammars.push_back(line);
       }
-
-
    }
 
    else{
       cout<<"Input file could not be opened. Terminating..."<<endl;
+      // exit(1);
    }
-
-
 }
 
+void drawLeaf(float centerX,float centerY,float centerZ){
+
+      //Remeber what Gousie said about overlapping leaves...have a pallete to choose from
+      glColor3f (0.0, 1.0, 0.0);
+      
+      glBegin(GL_POLYGON);
+         glVertex3f(centerX-.05,centerY,centerZ);
+         glVertex3f(centerX,centerY+.1,centerZ);
+         glVertex3f(centerX+.05,centerY,centerZ);
+         glVertex3f(centerX,centerY-.1,centerZ);
+      glEnd();
+}
 
 /*****************************************************************/
 
@@ -98,7 +108,7 @@ void drawScene(void)
    glPointSize(6.0);
    glBegin(GL_POINTS);
       
-      for (float i = -1; i <= 1; i+=.01){
+      for (float i = -1; i <= 1; i+=.001){
          
          glVertex3f(i,.9,0);
       }
@@ -129,7 +139,19 @@ void drawScene(void)
    glRotatef(Xangle, 1.0, 0.0, 0.0);
 
    glColor3f (0.0, 0.0, 1.0);
-   glutWireTeapot (0.7);
+
+
+   glBegin(GL_POINTS);
+
+      glVertex3f(-1,-1,0);
+      glVertex3f(1,1,0);
+      glVertex3f(-1,1,0);
+      glVertex3f(1,-1,0);
+
+   glEnd();
+
+
+   // glutWireTeapot (0.7);
 
    //--------------------------END Fractal VIEWPORT---------------------------
 
@@ -225,7 +247,7 @@ int main(int argc, char **argv)
    fractal.readIn(filename);
    glutInit(&argc, argv);
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-   glutInitWindowSize(750, 750);
+   glutInitWindowSize(750, 1125);
    glutInitWindowPosition(100, 100);
    glutCreateWindow("Flowerly Fractal");
    setup();
