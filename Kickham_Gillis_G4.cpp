@@ -122,10 +122,6 @@ void drawScene(void)
    glColor3f (0.0, 0.0, 1.0);
    glutWireTeapot (0.7);
 
-
-
-   glFlush ();
-
    //--------------------------END Fractal VIEWPORT---------------------------
 
    glFlush();
@@ -158,6 +154,15 @@ void mouse (int button, int state, int x, int y)
    if (state == GLUT_DOWN) {
       float topBottomView= (height/2)+.3333*(height/2);
 
+      // multiply x and y by width and height (750x750)
+      // when clicking buttons to get x and y to check if clicked
+
+      // top left button
+      if ((x < 118 & x > 18) & (y < 574.2 & y > 508))
+         cout << "pressed button 1\n";
+
+
+      // say where x and y clicked are and if top or bottom viewport
       if (y < topBottomView)
          cout << "top x: " << x/(float)width << "   y: " << y/(float)height << endl;
       else
