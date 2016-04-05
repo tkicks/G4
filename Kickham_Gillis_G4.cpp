@@ -60,21 +60,32 @@ void drawScene(void)
    gluLookAt (0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 
+   // menu bar at bottom of screen
+   // change menu bar color to distinguish
    glColor3f(0.5, 0.5, 0.5);
    glBegin(GL_POLYGON);
-      glVertex3f(-100.0, -10.0, -6.0);
-      glVertex3f(100.0, -10.0, -6.0);
-      glVertex3f(100.0, firstHeight, -6.0);
-      glVertex3f(-100.0, firstHeight, -6.0);
+      glVertex3f(-100.0, -10.0, -7.0);
+      glVertex3f(100.0, -10.0, -7.0);
+      glVertex3f(100.0, firstHeight, -7.0);
+      glVertex3f(-100.0, firstHeight, -7.0);
    glEnd();
 
    glColor3f(1.0, 0.0, 0.0);
    glBegin(GL_POLYGON);
-      glVertex3f(5.0, 5.0, -5.0);
-      glVertex3f(2.0, 5.0, -5.0);
-      glVertex3f(2.0, 2.0, -5.0);
+      glVertex3f(-7.0, 3.0, -6.0);
+      glVertex3f(-7.0, 7.0, -6.0);
+      glVertex3f(-5.0, 7.0, -6.0);
+      glVertex3f(-5.0, 3.0, -6.0);
    glEnd();
-   glColor3f(0.0, 0.0, 0.0);
+
+   // triangle to try to learn coordinates
+   // glColor3f(1.0, 0.0, 0.0);
+   // glBegin(GL_POLYGON);
+   //    glVertex3f(5.0, 5.0, -5.0);
+   //    glVertex3f(2.0, 5.0, -5.0);
+   //    glVertex3f(2.0, 2.0, -5.0);
+   // glEnd();
+   // glColor3f(0.0, 0.0, 0.0);
 
 
    // cout << "top " << top << " firstHeight " << firstHeight << endl;
@@ -101,6 +112,7 @@ void drawScene(void)
 
    glViewport(0, firstHeight, width, top);
 
+   glColor3f(0.0, 0.0, 0.0);
    glBegin(GL_POLYGON);
       glVertex3f(5.0, 5.0, -5.0);
       glVertex3f(2.0, 5.0, -5.0);
@@ -139,6 +151,15 @@ void mouse (int button, int state, int x, int y)
    if (state == GLUT_DOWN) {
       float topBottomView= (height/2)+.3333*(height/2);
 
+      // multiply x and y by width and height (750x750)
+      // when clicking buttons to get x and y to check if clicked
+
+      // top left button
+      if ((x < 118 & x > 18) & (y < 574.2 & y > 508))
+         cout << "pressed button 1\n";
+
+
+      // say where x and y clicked are and if top or bottom viewport
       if (y < topBottomView)
          cout << "top x: " << x/(float)width << "   y: " << y/(float)height << endl;
       else
