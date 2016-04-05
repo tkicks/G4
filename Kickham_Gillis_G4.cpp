@@ -42,6 +42,7 @@ public:
     Tree () {};  // constructor
 
     void readIn(char* inFilename);
+    void drawButtons(float x1, float y1);
 
     void drawLeaf(float centerX,float centerY,float centerZ);
 
@@ -83,6 +84,19 @@ void drawLeaf(float centerX,float centerY,float centerZ){
       glEnd();
 }
 
+void Tree::drawButtons(float x1, float y1)
+// draw menu buttons
+{
+   glColor3f(0.2, 0.2, 0.2);
+   cout << x1 << " " << y1 << endl;
+   glBegin(GL_POLYGON);
+      glVertex3f(x1, y1, 0);
+      glVertex3f((x1+(width/750*.4)), y1, 0);
+      glVertex3f((x1+(width/750*.4)), (y1-(width/750*.4)), 0);
+      glVertex3f(x1, (y1-(width/750*.4)), 0);
+   glEnd();
+}
+
 /*****************************************************************/
 
 // Drawing routine.
@@ -109,12 +123,14 @@ void drawScene(void)
    glBegin(GL_POINTS);
       
       for (float i = -1; i <= 1; i+=.001){
-         
          glVertex3f(i,.9,0);
       }
+      
+   glEnd();
 
-   glEnd(); 
-
+   fractal.drawButtons((-width/750*.8), .8);
+   fractal.drawButtons((-width/750*.2), .8);
+   fractal.drawButtons((width/750*.4), .8);
 
    //--------------------------END MENU VIEWPORT---------------------------
 
@@ -188,16 +204,16 @@ void mouse (int button, int state, int x, int y)
       // multiply x and y by width and height (750x750)
       // when clicking buttons to get x and y to check if clicked
 
-      // top left button
-      if ((x < 118 & x > 18) & (y < 574.2 & y > 508))
+      // grammar 1
+      if ((x < (width*.3) & x > (width*.1)) & (y < (height*.77) & y > (height*.7)))
          cout << "pressed button 1\n";
 
 
       // say where x and y clicked are and if top or bottom viewport
       if (y < topBottomView)
-         cout << "top x: " << x/(float)width << "   y: " << y/(float)height << endl;
+         cout << "top x: " << x << "   y: " << y << endl;
       else
-         cout << "bottom: " << x/(float)width << "   y: " << y/(float)height << endl;
+         cout << "bottom: " << x << "   y: " << y << endl;
    }
 }
 
