@@ -13,9 +13,7 @@ using namespace std;
 #include <stdio.h>
 #include <GL/glut.h>
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
+
 
 using namespace std;
 
@@ -24,6 +22,8 @@ using namespace std;
 static GLsizei width, height; // OpenGL window size.
 
 float z = 5.0;
+
+static float Xangle = 0.0, Yangle = 0.0, Zangle = 0.0;
 
 /*************************************************************/
 
@@ -35,10 +35,7 @@ public:
     
     Tree () {};  // constructor
 
-    void readIn(char* inFilename);
-
-
-    vector<string> grammars;
+    
    
 };
 
@@ -46,26 +43,6 @@ Tree fractal;
 
 /************************Class Methods***************************/
 
-void Tree::readIn(char* inFilename){
-
-   ifstream inFile (inFilename);
-   string line;
-   
-   if (inFile.is_open()) {
-   
-      while ( getline (inFile,line) ){
-         grammars.push_back(line);
-      }
-
-
-   }
-
-   else{
-      cout<<"Input file could not be opened. Terminating..."<<endl;
-   }
-
-
-}
 
 
 
@@ -113,11 +90,16 @@ void drawScene(void)
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity ();
    glFrustum (-1, 1, -1, 1, 1.5, 20.0);
-   gluLookAt (0.0, 0.0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+   gluLookAt (0, 0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
    glViewport(0, firstHeight, width, top);
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
+
+   // Commands to turn the hemisphere.
+   glRotatef(Zangle, 0.0, 0.0, 1.0);
+   glRotatef(Yangle, 0.0, 1.0, 0.0);
+   glRotatef(Xangle, 1.0, 0.0, 0.0);
 
    glColor3f (0.0, 0.0, 1.0);
    glutWireTeapot (0.7);
@@ -180,6 +162,30 @@ void keyboard (unsigned char key, int x, int y)
       case '2': z = z - 1;
       cout << "z = " << z << endl;
                 glutPostRedisplay ();
+                break;
+      case 'x': Xangle += 5.0;
+                if (Xangle > 360.0) Xangle -= 360.0;
+                glutPostRedisplay();
+                break;
+      case 'X': Xangle -= 5.0;
+                if (Xangle < 0.0) Xangle += 360.0;
+                glutPostRedisplay();
+                break;
+      case 'y': Yangle += 5.0;
+                if (Yangle > 360.0) Yangle -= 360.0;
+                glutPostRedisplay();
+                break;
+      case 'Y': Yangle -= 5.0;
+                if (Yangle < 0.0) Yangle += 360.0;
+                glutPostRedisplay();
+                break;
+      case 'z': Zangle += 5.0;
+                if (Zangle > 360.0) Zangle -= 360.0;
+                glutPostRedisplay();
+                break;
+      case 'Z': Zangle -= 5.0;
+                if (Zangle < 0.0) Zangle += 360.0;
+                glutPostRedisplay();
                 break;
       case 'q': exit (1);
    }
