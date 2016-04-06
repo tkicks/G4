@@ -201,12 +201,15 @@ void mouse (int button, int state, int x, int y)
    if (state == GLUT_DOWN) {
       float topBottomView= (height/2)+.3333*(height/2);
 
-      // multiply x and y by width and height (750x750)
-      // when clicking buttons to get x and y to check if clicked
-
       // grammar 1
       if ((x < (width*.3) & x > (width*.1)) & (y < (height*.77) & y > (height*.7)))
          cout << "pressed button 1\n";
+      // grammar 2
+      else if ((x < (width*.6) & x > (width*.4)) & (y < (height*.77) & y > (height*.7)))
+        cout << "pressed button 2\n";
+      // grammar 3
+      else if ((x < (width*.9) & x > (width*.7)) & (y < (height*.77) & y > (height*.7)))
+        cout << "pressed button 3\n";
 
 
       // say where x and y clicked are and if top or bottom viewport
