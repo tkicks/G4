@@ -43,7 +43,7 @@ public:
 	 Tree () {objHeight = 0.2; objRadius = 0.05; angle = 0; n = 0;};  // constructor
 
 	 void readIn(char* inFilename);
-	 void drawButtons(float x1, float y1);
+	 void drawButtons(float x1, float y1, float buttonWidth, float buttonHeight);
 
 	 void drawLeaf(float centerX,float centerY,float centerZ);
 	 void drawTree();
@@ -102,9 +102,9 @@ void Tree::drawTree()
 
 
 
-	for (int i = 0; i < plant.size(); i++)
-		cout << plant[i];
-	cout << endl;
+	// for (int i = 0; i < plant.size(); i++)
+	// 	cout << plant[i];
+	// cout << endl;
 	float centerX, centerY, centerZ;
 
 	for (int i = 0; i < plant.size(); i++)
@@ -160,15 +160,15 @@ void Tree::drawBranch()
 	glFlush();
 }
 
-void Tree::drawButtons(float x1, float y1)
+void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight)
 // draw menu buttons
 {
 	glColor3f(0.2, 0.2, 0.2);
 	glBegin(GL_POLYGON);
 		glVertex3f(x1, y1, 0);
-		glVertex3f((x1+(width/750*.4)), y1, 0);
-		glVertex3f((x1+(width/750*.4)), (y1-(width/750*.4)), 0);
-		glVertex3f(x1, (y1-(width/750*.4)), 0);
+		glVertex3f((x1+(width/750*buttonWidth)), y1, 0);
+		glVertex3f((x1+(width/750*buttonWidth)), (y1-(width/750*buttonHeight)), 0);
+		glVertex3f(x1, (y1-(width/750*buttonHeight)), 0);
 	glEnd();
 }
 
@@ -203,9 +203,25 @@ void drawScene(void)
 		
 	glEnd();
 
-	fractal.drawButtons((-width/750*.8), .8);
-	fractal.drawButtons((-width/750*.2), .8);
-	fractal.drawButtons((width/750*.4), .8);
+	// drawButtons(x, y, width, height)
+	// grammar buttons
+	fractal.drawButtons((-width/750*.8), .8, .4, .4);
+	fractal.drawButtons((-width/750*.2), .8, .4, .4);
+	fractal.drawButtons((width/750*.4), .8, .4, .4);
+	// zoom buttons
+	fractal.drawButtons((-width/750*.8), .2, .2, .4);
+	fractal.drawButtons((-width/750*.8), -.4, .2, .4);
+	// x rotation buttons
+	fractal.drawButtons((-width/750*.5), .2, .2, .4);
+	fractal.drawButtons((-width/750*.5), -.4, .2, .4);
+	// y rotation buttons
+	fractal.drawButtons((-width/750*.2), .2, .2, .4);
+	fractal.drawButtons((-width/750*.2), -.4, .2, .4);
+	// z rotation buttons
+	fractal.drawButtons((width/750*.1), .2, .2, .4);
+	fractal.drawButtons((width/750*.1), -.4, .2, .4);
+	// grow button
+	fractal.drawButtons((width/750*.4), -.1, .4, .4);
 
 	//--------------------------END MENU VIEWPORT---------------------------
 
@@ -289,30 +305,29 @@ void mouse (int button, int state, int x, int y)
 		// grammar 1
 		if ((x < (width*.3) & x > (width*.1)) & (y < (height*.77) & y > (height*.7)))
 		{
-			// cout << "Grammar 1\n";
+			cout << "Grammar 1\n";
 			fractal.grammarNum = 0;
 			fractal.angle = 45;
-			if (fractal.n == 0)
-				fractal.plant.push_back('B');
-			fractal.growTree();
-			fractal.drawTree();
 		}
 		// grammar 2
 		else if ((x < (width*.6) & x > (width*.4)) & (y < (height*.77) & y > (height*.7)))
 		{
-			// cout << "pressed button 2\n";
+			cout << "pressed button 2\n";
 			fractal.grammarNum = 1;
-			if (fractal.n == 0)
-				fractal.plant.push_back('B');
-			fractal.drawTree();
 		}
 		// grammar 3
 		else if ((x < (width*.9) & x > (width*.7)) & (y < (height*.77) & y > (height*.7)))
 		{
-			// cout << "pressed button 3\n";
+			cout << "pressed button 3\n";
 			fractal.grammarNum = 2;
+		}
+		// grow tree
+		else if ((x < (width*.9) & x > (width*.7)) & (y < (height*.92) & y > (height*.85)))
+		{
+			cout << "pressed grow\n";
 			if (fractal.n == 0)
 				fractal.plant.push_back('B');
+			fractal.growTree();
 			fractal.drawTree();
 		}
 
@@ -384,4 +399,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
