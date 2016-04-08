@@ -17,6 +17,8 @@ using namespace std;
 #include <string>
 #include <vector>
 #include <pthread.h>
+GLenum rgb;					// for tkmap.c
+#include "tkmap.c"
 
 
 using namespace std;
@@ -50,6 +52,8 @@ public:
 	 void drawBranch();
 	 void growTree();
 	 void rotateObj(float omega, float x, float y, float z);
+	 void createLabels();
+	 void writeLabels(float x, float y, const char label[]);
 
 	 vector<string> grammars;
 	 vector<char> plant;
@@ -85,6 +89,7 @@ void Tree::readIn(char* inFilename){
 void Tree::drawLeaf(float centerX,float centerY,float centerZ){
 
 		cout << "drawLeaf()\n";
+		cout << centerX << " " << centerY << " " << centerZ << endl;
 
 		//Remeber what Gousie said about overlapping leaves...have a pallete to choose from
 		glColor3f (0.0, 1.0, 0.0);
@@ -99,8 +104,6 @@ void Tree::drawLeaf(float centerX,float centerY,float centerZ){
 
 void Tree::drawTree()
 {
-
-
 
 	// for (int i = 0; i < plant.size(); i++)
 	// 	cout << plant[i];
@@ -145,7 +148,7 @@ void Tree::growTree()
 
 void Tree::rotateObj(float omega, float x, float y, float z)
 {
-	cout << "rotateObj(" << omega << ", " << x << ", " << y << ", " << z << ")\n";
+	// cout << "rotateObj(" << omega << ", " << x << ", " << y << ", " << z << ")\n";
 }
 
 void Tree::drawBranch()
@@ -170,6 +173,28 @@ void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight
 		glVertex3f((x1+(width/750*buttonWidth)), (y1-(width/750*buttonHeight)), 0);
 		glVertex3f(x1, (y1-(width/750*buttonHeight)), 0);
 	glEnd();
+}
+
+void Tree::createLabels()
+{
+	glColor3f(1.0, 0.0, 0.0);
+	writeLabels(-1.0, 1.0, "Grammar 1");
+	writeLabels(-0.8, 1.0, "Grammar 1");
+}
+
+void Tree::writeLabels(float x, float y, const char label[])
+{
+	int i = 0;						// iterator
+	cout << x*(width/750) << endl;
+	glRasterPos2i((x*(width/750)), y*(height/750));	// position w/ x,y% coordinates
+	// while more chars, write to map
+	while (label[i] != '\0')
+	{
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, label[i]);
+		i++;
+	}
+
+	glFlush();	// draw
 }
 
 /*****************************************************************/
@@ -222,6 +247,9 @@ void drawScene(void)
 	fractal.drawButtons((width/750*.1), -.4, .2, .4);
 	// grow button
 	fractal.drawButtons((width/750*.4), -.1, .4, .4);
+
+	// label buttons
+	fractal.createLabels();
 
 	//--------------------------END MENU VIEWPORT---------------------------
 
@@ -295,49 +323,98 @@ void resize(int w, int h)
 void mouse (int button, int state, int x, int y)
 {
 	if (state == GLUT_DOWN) {
-		int viewport[4];
 		float topBottomView= (height/2)+.3333*(height/2);
-		float winZ;
-		double posX, posY, posZ;
-		GLdouble modelview[16];
-		GLdouble projection[16];
 
 		// grammar 1
-		if ((x < (width*.3) & x > (width*.1)) & (y < (height*.77) & y > (height*.7)))
+		if (x > (width*.1) & (x < (width*.3)) & (y > (height*.7) & y < (height*.77)))
 		{
-			cout << "Grammar 1\n";
+			// cout << "Grammar 1\n";
 			fractal.grammarNum = 0;
 			fractal.angle = 45;
 		}
 		// grammar 2
-		else if ((x < (width*.6) & x > (width*.4)) & (y < (height*.77) & y > (height*.7)))
+		else if (x > (width*.4) & (x < (width*.6)) & (y > (height*.7) & y < (height*.77)))
 		{
-			cout << "pressed button 2\n";
+			// cout << "pressed button 2\n";
 			fractal.grammarNum = 1;
 		}
 		// grammar 3
-		else if ((x < (width*.9) & x > (width*.7)) & (y < (height*.77) & y > (height*.7)))
+		else if (x > (width*.7) & (x < (width*.9)) & (y > (height*.7) & y < (height*.77)))
 		{
-			cout << "pressed button 3\n";
+			// cout << "pressed button 3\n";
 			fractal.grammarNum = 2;
 		}
-		// grow tree
-		else if ((x < (width*.9) & x > (width*.7)) & (y < (height*.92) & y > (height*.85)))
+		// zoom in
+		else if (x > (width*.1) & (x < (width*.2)) & (y > (height*.8) & y < (height*.87)))
 		{
-			cout << "pressed grow\n";
+			// cout << "pressed zoom in\n";
+			z = z - 1;
+			glutPostRedisplay ();
+		}
+		// zoom out
+		else if (x > (width*.1) & (x < (width*.2)) & (y > (height*.9) & y < (height*.97)))
+		{
+			// cout << "pressed zoom out\n";
+			z = z + 1;
+			glutPostRedisplay ();
+		}
+		// rotate positive x
+		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.8) & y < (height*.87)))
+		{
+			// cout << "pressed rotate positive x\n";
+			Xangle += 5.0;
+			if (Xangle > 360.0) Xangle -= 360.0;
+			glutPostRedisplay();
+		}
+		// rotate negative x
+		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.9) & y < (height*.97)))
+		{
+			// cout << "pressed rotate negative x\n";
+			Xangle -= 5.0;
+			if (Xangle < 0.0) Xangle += 360.0;
+			glutPostRedisplay();
+		}
+		// rotate positive y
+		else if (x > (width*.4) & (x < (width*.5)) & (y > (height*.8) & y < (height*.87)))
+		{
+			// cout << "pressed rotate positive y\n";
+			Yangle += 5.0;
+			if (Yangle > 360.0) Yangle -= 360.0;
+			glutPostRedisplay();
+		}
+		// rotate negative y
+		else if (x > (width*.4) & (x < (width*.5)) & (y > (height*.9) & y < (height*.97)))
+		{
+			// cout << "pressed rotate negative y\n";
+			Yangle -= 5.0;
+			if (Yangle < 0.0) Yangle += 360.0;
+			glutPostRedisplay();
+		}
+		// rotate positive z
+		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.8) & y < (height*.87)))
+		{
+			// cout << "pressed rotate positive z\n";
+			Zangle += 5.0;
+			if (Zangle > 360.0) Zangle -= 360.0;
+			glutPostRedisplay();
+		}
+		// rotate negative z
+		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.9) & y < (height*.97)))
+		{
+			// cout << "pressed rotate negative z\n";
+			Zangle -= 5.0;
+			if (Zangle < 0.0) Zangle += 360.0;
+			glutPostRedisplay();
+		}
+		// grow tree
+		else if (x > (width*.7) & (x < (width*.9)) & (y > (height*.85) & y < (height*.92)))
+		{
+			// cout << "pressed grow\n";
 			if (fractal.n == 0)
 				fractal.plant.push_back('B');
 			fractal.growTree();
 			fractal.drawTree();
 		}
-
-		// gluUnProject((float)x, (float) y, (float) winZ, modelview, projection, viewport, &posX, &posY, &posZ);
-
-		// say where x and y clicked are and if top or bottom viewport
-		// if (y < topBottomView)
-		// 	cout << "top x: " << x << "   y: " << y << endl;
-		// else
-		// 	cout << "bottom: " << x << "   y: " << y << endl;
 	}
 }
 
