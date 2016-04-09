@@ -197,7 +197,9 @@ void Tree::createLabels()
 	writeLabels(-0.14, -0.6, "-Y");
 	writeLabels(0.16, 0.0, "+Z");
 	writeLabels(0.16, -0.6, "-Z");
-	writeLabels(0.53, -0.3, "Grow");
+	writeLabels(0.53, 0.0, "Grow");
+	writeLabels(0.44, -0.6, "Clear");
+	writeLabels(0.7, -0.6, "Quit");
 }
 
 void Tree::writeLabels(float x, float y, const char label[])
@@ -263,7 +265,11 @@ void drawScene(void)
 	fractal.drawButtons((width/750*.1), .2, .2, .4);
 	fractal.drawButtons((width/750*.1), -.4, .2, .4);
 	// grow button
-	fractal.drawButtons((width/750*.4), -.1, .4, .4);
+	fractal.drawButtons((width/750*.4), .2, .4, .4);
+	// clear button
+	fractal.drawButtons((width/750*.4), -.4, .2, .4);
+	// clear button
+	fractal.drawButtons((width/750*.65), -.4, .2, .4);
 
 	// label buttons
 	fractal.createLabels();
@@ -421,12 +427,30 @@ void mouse (int button, int state, int x, int y)
 			glutPostRedisplay();
 		}
 		// grow tree
-		else if (x > (width*.7) & (x < (width*.9)) & (y > (height*.85) & y < (height*.92)))
+		else if (x > (width*.7) & (x < (width*.9)) & (y > (height*.8) & y < (height*.87)))
 		{
 			if (fractal.n == 0)
 				fractal.plant.push_back('B');
 			fractal.growTree();
 			fractal.drawTree();
+		}
+		// clear
+		else if (x > (width*.7) & (x < (width*.8)) & (y > (height*.9) & y < (height*.97)))
+		{
+			cout << fractal.plant.size() << endl;
+			cout << "Clearing plant\n";
+			fractal.plant.clear();
+			cout << fractal.plant.size() << endl;
+			fractal.n = 0;
+			z = 3.75;
+			fractal.zoom = 0;
+			glutPostRedisplay();
+		}
+		// quit
+		else if (x > (width*.83) & (x < (width*.925)) & (y > (height*.9) & y < (height*.97)))
+		{
+			cout << "Quiting Flowerly Fractal\n";
+			exit (1);
 		}
 	}
 }
