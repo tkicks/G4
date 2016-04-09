@@ -32,6 +32,9 @@ float z = 3.75;
 static float Xangle = 0.0, Yangle = 0.0, Zangle = 0.0;
 static GLUquadricObj *qobj;
 
+const int maxZoom = 2;
+const int minZoom = -16;
+
 /*************************************************************/
 
 
@@ -42,7 +45,7 @@ class Tree{
 
 public:
 	 
-	 Tree () {objHeight = 0.2; objRadius = 0.05; angle = 0; n = 0;};  // constructor
+	 Tree () {objHeight = 0.2; objRadius = 0.05; angle = 0; n = 0; zoom = 0;};  // constructor
 
 	 void readIn(char* inFilename);
 	 void drawButtons(float x1, float y1, float buttonWidth, float buttonHeight);
@@ -62,6 +65,7 @@ public:
 	 float angle;        // angle to rotate branches by
 	 int n;					// number of iterations
 	 int grammarNum;		// which grammar
+	 int zoom;
 };
 
 Tree fractal;
@@ -88,8 +92,8 @@ void Tree::readIn(char* inFilename){
 
 void Tree::drawLeaf(float centerX,float centerY,float centerZ){
 
-		cout << "drawLeaf()\n";
-		cout << centerX << " " << centerY << " " << centerZ << endl;
+		// cout << "drawLeaf()\n";
+		// cout << centerX << " " << centerY << " " << centerZ << endl;
 
 		//Remeber what Gousie said about overlapping leaves...have a pallete to choose from
 		glColor3f (0.0, 1.0, 0.0);
@@ -128,6 +132,10 @@ void Tree::drawTree()
 			rotateObj(angle, 0.0, 0.0, 1.0);
 		else if (plant[i] == 'z')
 			rotateObj(-angle, 0.0, 0.0, 1.0);
+		else if (plant[i] == '[')
+			cout << "pushMatrix()\n";
+		else if (plant[i] == ']')
+			cout << "popMatrix()\n";
 	}
 }
 
@@ -153,7 +161,7 @@ void Tree::rotateObj(float omega, float x, float y, float z)
 
 void Tree::drawBranch()
 {
-	cout << "drawBranch()\n";
+	// cout << "drawBranch()\n";
 
 	glPushMatrix();
 		glColor3f(.545, .271, .075);
@@ -177,16 +185,25 @@ void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight
 
 void Tree::createLabels()
 {
-	glColor3f(1.0, 0.0, 0.0);
-	writeLabels(-1.0, 1.0, "Grammar 1");
-	writeLabels(-0.8, 1.0, "Grammar 1");
+	glColor3f(1.0, 1.0, 1.0);
+	writeLabels(-0.72, 0.6, "Grammar 1");
+	writeLabels(-0.12, 0.6, "Grammar 2");
+	writeLabels(0.48, 0.6, "Grammar 3");
+	writeLabels(-0.72, 0.0, "+");
+	writeLabels(-0.72, -0.6, "-");
+	writeLabels(-0.45, 0.0, "+X");
+	writeLabels(-0.45, -0.6, "-X");
+	writeLabels(-0.14, 0.0, "+Y");
+	writeLabels(-0.14, -0.6, "-Y");
+	writeLabels(0.16, 0.0, "+Z");
+	writeLabels(0.16, -0.6, "-Z");
+	writeLabels(0.53, -0.3, "Grow");
 }
 
 void Tree::writeLabels(float x, float y, const char label[])
 {
 	int i = 0;						// iterator
-	cout << x*(width/750) << endl;
-	glRasterPos2i((x*(width/750)), y*(height/750));	// position w/ x,y% coordinates
+	glRasterPos2f((x*(width/750)), y*(height/750));	// position w/ x,y% coordinates
 	// while more chars, write to map
 	while (label[i] != '\0')
 	{
@@ -328,40 +345,42 @@ void mouse (int button, int state, int x, int y)
 		// grammar 1
 		if (x > (width*.1) & (x < (width*.3)) & (y > (height*.7) & y < (height*.77)))
 		{
-			// cout << "Grammar 1\n";
 			fractal.grammarNum = 0;
 			fractal.angle = 45;
 		}
 		// grammar 2
 		else if (x > (width*.4) & (x < (width*.6)) & (y > (height*.7) & y < (height*.77)))
 		{
-			// cout << "pressed button 2\n";
 			fractal.grammarNum = 1;
 		}
 		// grammar 3
 		else if (x > (width*.7) & (x < (width*.9)) & (y > (height*.7) & y < (height*.77)))
 		{
-			// cout << "pressed button 3\n";
 			fractal.grammarNum = 2;
 		}
 		// zoom in
 		else if (x > (width*.1) & (x < (width*.2)) & (y > (height*.8) & y < (height*.87)))
 		{
-			// cout << "pressed zoom in\n";
-			z = z - 1;
-			glutPostRedisplay ();
+			if (fractal.zoom < maxZoom)
+			{
+				z -= 1;
+				fractal.zoom += 1;
+				glutPostRedisplay ();
+			}
 		}
 		// zoom out
 		else if (x > (width*.1) & (x < (width*.2)) & (y > (height*.9) & y < (height*.97)))
 		{
-			// cout << "pressed zoom out\n";
-			z = z + 1;
-			glutPostRedisplay ();
+			if (fractal.zoom > minZoom)
+			{
+				z += 1;
+				fractal.zoom -= 1;
+				glutPostRedisplay ();
+			}
 		}
 		// rotate positive x
 		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.8) & y < (height*.87)))
 		{
-			// cout << "pressed rotate positive x\n";
 			Xangle += 5.0;
 			if (Xangle > 360.0) Xangle -= 360.0;
 			glutPostRedisplay();
@@ -369,7 +388,6 @@ void mouse (int button, int state, int x, int y)
 		// rotate negative x
 		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.9) & y < (height*.97)))
 		{
-			// cout << "pressed rotate negative x\n";
 			Xangle -= 5.0;
 			if (Xangle < 0.0) Xangle += 360.0;
 			glutPostRedisplay();
@@ -377,7 +395,6 @@ void mouse (int button, int state, int x, int y)
 		// rotate positive y
 		else if (x > (width*.4) & (x < (width*.5)) & (y > (height*.8) & y < (height*.87)))
 		{
-			// cout << "pressed rotate positive y\n";
 			Yangle += 5.0;
 			if (Yangle > 360.0) Yangle -= 360.0;
 			glutPostRedisplay();
@@ -385,7 +402,6 @@ void mouse (int button, int state, int x, int y)
 		// rotate negative y
 		else if (x > (width*.4) & (x < (width*.5)) & (y > (height*.9) & y < (height*.97)))
 		{
-			// cout << "pressed rotate negative y\n";
 			Yangle -= 5.0;
 			if (Yangle < 0.0) Yangle += 360.0;
 			glutPostRedisplay();
@@ -393,7 +409,6 @@ void mouse (int button, int state, int x, int y)
 		// rotate positive z
 		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.8) & y < (height*.87)))
 		{
-			// cout << "pressed rotate positive z\n";
 			Zangle += 5.0;
 			if (Zangle > 360.0) Zangle -= 360.0;
 			glutPostRedisplay();
@@ -401,7 +416,6 @@ void mouse (int button, int state, int x, int y)
 		// rotate negative z
 		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.9) & y < (height*.97)))
 		{
-			// cout << "pressed rotate negative z\n";
 			Zangle -= 5.0;
 			if (Zangle < 0.0) Zangle += 360.0;
 			glutPostRedisplay();
@@ -409,7 +423,6 @@ void mouse (int button, int state, int x, int y)
 		// grow tree
 		else if (x > (width*.7) & (x < (width*.9)) & (y > (height*.85) & y < (height*.92)))
 		{
-			// cout << "pressed grow\n";
 			if (fractal.n == 0)
 				fractal.plant.push_back('B');
 			fractal.growTree();
