@@ -9,6 +9,6 @@
    * Currently would draw both branches at 45 degrees making a diagonal line instead of angled lines 
  * ~~Add in ability to draw leaves in drawTree method~~
  * ~~Make a myDrawFunction that draws in x-y plane and and can be rotated about y to draw more robust tree~~
- * Un-comment exit(1) on invalid input so the program closes.
  * Make leaf colors a pallete instead of random (increment a counter%numColors and choose color from list)
  * Find better angles for the copy-rotated parts of the tree.
+ * ~~Un-comment exit(1) on invalid input so the program closes.~~

@@ -38,7 +38,8 @@ static GLUquadricObj *qobj;
 const int maxZoom = 2;
 const int minZoom = -16;
 
-const string sequence="b-bl[-b+bl+b]+b-bl-b";
+const string sequence="bl-bl[-bl+bl+bl]+bl-bl-bl";
+
 /*************************************************************/
 
 void* simpleFunc(void*) { return NULL; }
@@ -88,6 +89,7 @@ public:
 	float startY;   //Coords for the top of the first cylinder drawn (0,startY,0) so only need var for startY 
 
 	stack<vector<float> > knots; //Coords for the places to pop back to
+
 };
 
 Tree fractal;
@@ -113,7 +115,7 @@ void Tree::readIn(char* inFilename){
 }
 
 void Tree::drawLeaf(){
-		
+		cout << "leaf\n";
 		float colorLeaf = leafColor();
 		//Remeber what Gousie said about overlapping leaves...have a pallete to choose from
 		if (colorLeaf == 0){
@@ -132,6 +134,7 @@ void Tree::drawLeaf(){
 		glVertex3f(0.05,0,0);
 		glVertex3f(0,-0.1,0);
 		glEnd();
+		glFlush();
 }
 
 
@@ -201,6 +204,7 @@ int Tree::drawAngled(int direction, bool withLeaf){
 	}
 
 	zRotation(direction);
+
 	glPopMatrix();
 
 	return leafCount;
@@ -349,6 +353,10 @@ int Tree::makeTree(int operation){
 	else if(operation==4){
 		strInc=1;
 	}
+	else if(operation==5){
+		// drawLeaf();
+		strInc=1;
+	}
 
 	return strInc;
 
@@ -394,7 +402,7 @@ void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight
 
 void Tree::createLabels()
 {
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(1.0, 0.0, 0.0);
 	writeLabels(-0.72, 0.6, "Grammar 1");
 	writeLabels(-0.12, 0.6, "Grammar 2");
 	writeLabels(0.48, 0.6, "Grammar 3");
@@ -463,27 +471,27 @@ void drawScene(void)
 
 	// drawButtons(x, y, width, height)
 	// grammar buttons
-	fractal.drawButtons((-width/750*.8), .8, .4, .4);
-	fractal.drawButtons((-width/750*.2), .8, .4, .4);
-	fractal.drawButtons((width/750*.4), .8, .4, .4);
-	// zoom buttons
-	fractal.drawButtons((-width/750*.8), .2, .2, .4);
-	fractal.drawButtons((-width/750*.8), -.4, .2, .4);
-	// x rotation buttons
-	fractal.drawButtons((-width/750*.5), .2, .2, .4);
-	fractal.drawButtons((-width/750*.5), -.4, .2, .4);
-	// y rotation buttons
-	fractal.drawButtons((-width/750*.2), .2, .2, .4);
-	fractal.drawButtons((-width/750*.2), -.4, .2, .4);
-	// z rotation buttons
-	fractal.drawButtons((width/750*.1), .2, .2, .4);
-	fractal.drawButtons((width/750*.1), -.4, .2, .4);
-	// grow button
-	fractal.drawButtons((width/750*.4), .2, .4, .4);
-	// clear button
-	fractal.drawButtons((width/750*.4), -.4, .2, .4);
-	// clear button
-	fractal.drawButtons((width/750*.65), -.4, .2, .4);
+	// fractal.drawButtons((-width/750*.8), .8, .4, .4);
+	// fractal.drawButtons((-width/750*.2), .8, .4, .4);
+	// fractal.drawButtons((width/750*.4), .8, .4, .4);
+	// // zoom buttons
+	// fractal.drawButtons((-width/750*.8), .2, .2, .4);
+	// fractal.drawButtons((-width/750*.8), -.4, .2, .4);
+	// // x rotation buttons
+	// fractal.drawButtons((-width/750*.5), .2, .2, .4);
+	// fractal.drawButtons((-width/750*.5), -.4, .2, .4);
+	// // y rotation buttons
+	// fractal.drawButtons((-width/750*.2), .2, .2, .4);
+	// fractal.drawButtons((-width/750*.2), -.4, .2, .4);
+	// // z rotation buttons
+	// fractal.drawButtons((width/750*.1), .2, .2, .4);
+	// fractal.drawButtons((width/750*.1), -.4, .2, .4);
+	// // grow button
+	// fractal.drawButtons((width/750*.4), .2, .4, .4);
+	// // clear button
+	// fractal.drawButtons((width/750*.4), -.4, .2, .4);
+	// // clear button
+	// fractal.drawButtons((width/750*.65), -.4, .2, .4);
 
 	// label buttons
 	fractal.createLabels();
@@ -737,4 +745,5 @@ int main(int argc, char **argv)
 	glutMainLoop();
 
 	return 0;
+
 }
