@@ -195,15 +195,14 @@ int Tree::makeTree(int operation){
 				popKnot();
 				drawVertical();
 
-				if(decision(sequence[strPos-1])==4){
-				
-			}
+			}	
 			else{
 				drawVertical();
 			}
+		
 		}
 		strInc=1;	
-	}
+	}	
 	else if(operation==1){		
 		//4 is ] which means pop knot
 		
