@@ -16,6 +16,7 @@ Output: An openGL window displaying
 #include <stack>
 #include <math.h>
 #include <pthread.h>
+//#include <stdlib.h> 
 GLenum rgb;					// for tkmap.c
 #include "tkmap.c"
 
@@ -37,57 +38,56 @@ static GLUquadricObj *qobj;
 const int maxZoom = 2;
 const int minZoom = -16;
 
-const string sequence="b-b[-b+b+b]+b-b-b";
+const string sequence="b-bl[-b+bl+b]+b-bl-b";
 /*************************************************************/
-
 
 void* simpleFunc(void*) { return NULL; }
 void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, NULL); }
-int decision(char letter);
 
 class Tree{
 
 public:
 	 
-	 Tree () {objHeight = 0.2; objRadius = 0.05; angle = 45*PI/180; n = 0; startY=-0.79; currP.push_back(0.0);currP.push_back(0);currP.push_back(0.0);};  // constructor
+	Tree () {objHeight = 0.2; objRadius = 0.05; angle = 45*PI/180; n = 0; startY=-0.79; currP.push_back(0.0);currP.push_back(0);currP.push_back(0.0);};  // constructor
 
-	 void readIn(char* inFilename);
-	 void drawButtons(float x1, float y1, float buttonWidth, float buttonHeight);
+	void readIn(char* inFilename);
+	void drawButtons(float x1, float y1, float buttonWidth, float buttonHeight);
 
-	 void drawLeaf();
-	 void drawBranch();
+	void drawLeaf();
+	void drawBranch();
 
-	 void zRotation(int direction);
+	void zRotation(int direction);
 	 
-	 void drawVertical();
-	 void drawAngled(int direction);
+	int drawVertical(bool withLeaf);
+	int drawAngled(int direction, bool withLeaf);
 
-	 void pushKnot();
-	 void popKnot();
+	void pushKnot();
+	void popKnot();
+    
+    int decision(char letter);
+	int makeTree(int operation);
 
-	 int makeTree(int operation);
+	void growTree();
 
-	 void growTree();
-
-	 void myDraw();
+	void myDraw();
 	
-	 void createLabels();
-	 void writeLabels(float x, float y, const char label[]);
-	 float leafColor();			// randomly determine leaf color
+	void createLabels();
+	void writeLabels(float x, float y, const char label[]);
+	float leafColor();			// randomly determine leaf color
 
-	 vector<string> grammars;
-	 vector<char> plant;
-	 vector<float>currP;
-	 float objHeight;    // height of cylinders (branches)
-	 float objRadius;    // radius of cylinders (branches)
-	 float angle;        // angle to rotate branches by
-	 int n;					// number of iterations
-	 int grammarNum;		// which grammar
-	 int zoom;
+	vector<string> grammars;
+	vector<char> plant;
+	vector<float>currP;
+	float objHeight;    // height of cylinders (branches)
+	float objRadius;    // radius of cylinders (branches)
+	float angle;        // angle to rotate branches by
+	int n;					// number of iterations
+	int grammarNum;		// which grammar
+	int zoom;
 
-	 float startY;   //Coords for the top of the first cylinder drawn (0,startY,0) so only need var for startY 
+	float startY;   //Coords for the top of the first cylinder drawn (0,startY,0) so only need var for startY 
 
-	 stack<vector<float> > knots; //Coords for the places to pop back to
+	stack<vector<float> > knots; //Coords for the places to pop back to
 };
 
 Tree fractal;
@@ -165,28 +165,45 @@ void Tree::drawBranch()
 	glFlush();
 }
 
-void Tree::drawVertical(){
+int Tree::drawVertical(bool withLeaf){
 	
+	int leafCount=0;
+
 	glPushMatrix();
 	glTranslatef(0.0,objHeight,0.0);
 	glTranslatef(currP[0],currP[1],currP[2]);
 	drawBranch();
-	//If drawing a leaf next call drawLeaf here
+	
+	if(withLeaf){
+		drawLeaf();
+		leafCount=1;
+	}
+
 	glPopMatrix();
 
 	currP[1]+=objHeight;
+	return leafCount;
 }
 
-void Tree::drawAngled(int direction){
+int Tree::drawAngled(int direction, bool withLeaf){
 	
+	int leafCount=0;
+
 	glPushMatrix();
 	glTranslatef(currP[0],currP[1],currP[2]);
 	glRotatef(direction*45.0,0,0,1);
 	glTranslatef(0.0,objHeight,0.0);
 	drawBranch();
+
+	if(withLeaf){
+		drawLeaf();
+		leafCount=1;
+	}
+
 	zRotation(direction);
-	//If drawing a leaf next call drawLeaf here
 	glPopMatrix();
+
+	return leafCount;
 }
 
 void Tree::pushKnot(){
@@ -211,11 +228,34 @@ void Tree::popKnot(){
 
 }
 
+int Tree::decision(char letter){
+	
+	if(letter=='b'){
+		return 0;	
+	}
+	else if(letter=='+'){
+		return 1;		
+	}
+	else if(letter=='-'){
+		return 2;
+	}
+	else if(letter=='['){
+		return 3;
+	}
+	else if(letter==']'){
+		return 4;
+	}
+	else if(letter=='l'){
+		return 5;
+	}
+}
+
 int Tree::makeTree(int operation){
 
 	int strInc;
+	int extra=0;
 	if(operation==0){
-		// //Assumes first char in str is always a vert branch
+		//Assumes first char in str is always a vert branch and second char not a leaf
 		//cout<<strPos<<endl;
 		if(strPos==0){
 			drawBranch();
@@ -228,41 +268,79 @@ int Tree::makeTree(int operation){
 			if(decision(sequence[strPos-1])==4){
 				//the char before the vert branch was a pop
 				popKnot();
-				drawVertical();
+
+				if(strPos<sequence.size()-1){
+					extra=drawVertical(decision(sequence[strPos+1])==5);
+				}
+
+				else{
+					drawVertical(false);
+				}
 
 			}	
 			else{
-				drawVertical();
+				if(strPos<sequence.size()-1){
+					extra=drawVertical(decision(sequence[strPos+1])==5);
+				}
+
+				else{
+					drawVertical(false);
+				}
 			}
-		
 		}
-		strInc=1;	
+		strInc=1+extra;	
 	}	
 	else if(operation==1){		
 		//4 is ] which means pop knot
-		
 		if(decision(sequence[strPos-1])==4){
 			//For some reason unnkwon reason this is exeuting
 			popKnot();
-			drawAngled(1);
+
+			if(strPos<sequence.size()-1){
+				extra=drawAngled(1,decision(sequence[strPos+2])==5);
+			}
+
+			else{
+				drawAngled(1,false);
+			}
+			
 		}
 		else{
-			drawAngled(1);
+			if(strPos<sequence.size()-1){
+				extra=drawAngled(1,decision(sequence[strPos+2])==5);
+			}
+
+			else{
+				drawAngled(1,false);
+			}
 		}
-		strInc=2;
+		strInc=2+extra;
 	}
 	else if(operation==2){
 		//4 is ] which means pop knot
 		if(decision(sequence[strPos-1])==4){
-
-			//the char before the vert branch was a pop
+			//For some reason unnkwon reason this is exeuting
 			popKnot();
-			drawAngled(-1);
+
+			if(strPos<sequence.size()-1){
+				extra=drawAngled(-1,decision(sequence[strPos+2])==5);
+			}
+
+			else{
+				drawAngled(-1,false);
+			}
+			
 		}
 		else{
-			drawAngled(-1);
+			if(strPos<sequence.size()-1){
+				extra=drawAngled(-1,decision(sequence[strPos+2])==5);
+			}
+
+			else{
+				drawAngled(-1,false);
+			}
 		}
-		strInc=2;	
+		strInc=2+extra;
 	}
 	else if(operation==3){
 		pushKnot();
@@ -659,24 +737,4 @@ int main(int argc, char **argv)
 	glutMainLoop();
 
 	return 0;
-}
-
-int decision(char letter){
-	
-	if(letter=='b'){
-		return 0;	
-	}
-	else if(letter=='+'){
-		return 1;		
-	}
-	else if(letter=='-'){
-		return 2;
-	}
-	else if(letter=='['){
-		return 3;
-	}
-	else if(letter==']'){
-		// cout<<"FUUUUUUUU!!!!"<<endl;
-		return 4;
-	}
 }

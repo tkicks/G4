@@ -38,7 +38,7 @@ static GLUquadricObj *qobj;
 
 int strPos;
 
-const string sequence="b+b[+bb]";
+const string sequence="b-bl[-b+b+bl]+b-bl-b";
 /*************************************************************/
 
 
@@ -58,12 +58,13 @@ public:
 
 	 void zRotation(int direction);
 
-	 void drawVertical();
-	 void drawAngled(int direction);
+	 int drawVertical(bool withLeaf);
+	 int drawAngled(int direction, bool withLeaf);
 
 	 void pushKnot();
 	 void popKnot();
 
+	 int decision(char letter);
 	 int makeTree(int operation);
 
 	 void myDraw();
@@ -129,30 +130,45 @@ void Tree::zRotation(int direction){
 
 }
 
-void Tree::drawVertical(){
+int Tree::drawVertical(bool withLeaf){
 	
+	int leafCount=0;
+
 	glPushMatrix();
 	glTranslatef(0.0,objHeight,0.0);
 	glTranslatef(currP[0],currP[1],currP[2]);
 	drawBranch();
-	//If drawing a leaf next call drawLeaf here
+	
+	if(withLeaf){
+		drawLeaf();
+		leafCount=1;
+	}
+
 	glPopMatrix();
 
 	currP[1]+=objHeight;
+	return leafCount;
 }
 
-void Tree::drawAngled(int direction){
+int Tree::drawAngled(int direction, bool withLeaf){
 	
+	int leafCount=0;
+
 	glPushMatrix();
 	glTranslatef(currP[0],currP[1],currP[2]);
 	glRotatef(direction*45.0,0,0,1);
 	glTranslatef(0.0,objHeight,0.0);
 	drawBranch();
+
+	if(withLeaf){
+		drawLeaf();
+		leafCount=1;
+	}
+
 	zRotation(direction);
-	//If drawing a leaf next call drawLeaf here
 	glPopMatrix();
 
-
+	return leafCount;
 }
 
 void Tree::pushKnot(){
@@ -177,11 +193,34 @@ void Tree::popKnot(){
 
 }
 
+int Tree::decision(char letter){
+	
+	if(letter=='b'){
+		return 0;	
+	}
+	else if(letter=='+'){
+		return 1;		
+	}
+	else if(letter=='-'){
+		return 2;
+	}
+	else if(letter=='['){
+		return 3;
+	}
+	else if(letter==']'){
+		return 4;
+	}
+	else if(letter=='l'){
+		return 5;
+	}
+}
+
 int Tree::makeTree(int operation){
 
 	int strInc;
+	int extra=0;
 	if(operation==0){
-		// //Assumes first char in str is always a vert branch
+		//Assumes first char in str is always a vert branch and second char not a leaf
 		//cout<<strPos<<endl;
 		if(strPos==0){
 			drawBranch();
@@ -194,41 +233,79 @@ int Tree::makeTree(int operation){
 			if(decision(sequence[strPos-1])==4){
 				//the char before the vert branch was a pop
 				popKnot();
-				drawVertical();
+
+				if(strPos<sequence.size()-1){
+					extra=drawVertical(decision(sequence[strPos+1])==5);
+				}
+
+				else{
+					drawVertical(false);
+				}
 
 			}	
 			else{
-				drawVertical();
+				if(strPos<sequence.size()-1){
+					extra=drawVertical(decision(sequence[strPos+1])==5);
+				}
+
+				else{
+					drawVertical(false);
+				}
 			}
-		
 		}
-		strInc=1;	
+		strInc=1+extra;	
 	}	
 	else if(operation==1){		
 		//4 is ] which means pop knot
-		
 		if(decision(sequence[strPos-1])==4){
 			//For some reason unnkwon reason this is exeuting
 			popKnot();
-			drawAngled(1);
+
+			if(strPos<sequence.size()-1){
+				extra=drawAngled(1,decision(sequence[strPos+2])==5);
+			}
+
+			else{
+				drawAngled(1,false);
+			}
+			
 		}
 		else{
-			drawAngled(1);
+			if(strPos<sequence.size()-1){
+				extra=drawAngled(1,decision(sequence[strPos+2])==5);
+			}
+
+			else{
+				drawAngled(1,false);
+			}
 		}
-		strInc=2;
+		strInc=2+extra;
 	}
 	else if(operation==2){
 		//4 is ] which means pop knot
 		if(decision(sequence[strPos-1])==4){
-
-			//the char before the vert branch was a pop
+			//For some reason unnkwon reason this is exeuting
 			popKnot();
-			drawAngled(-1);
+
+			if(strPos<sequence.size()-1){
+				extra=drawAngled(-1,decision(sequence[strPos+2])==5);
+			}
+
+			else{
+				drawAngled(-1,false);
+			}
+			
 		}
 		else{
-			drawAngled(-1);
+			if(strPos<sequence.size()-1){
+				extra=drawAngled(-1,decision(sequence[strPos+2])==5);
+			}
+
+			else{
+				drawAngled(-1,false);
+			}
 		}
-		strInc=2;	
+		strInc=2+extra;
 	}
 	else if(operation==3){
 		pushKnot();
@@ -377,15 +454,15 @@ void drawScene(void)
 	fractal.myDraw();
 	glPopMatrix();
 
-	glPushMatrix();
-	glRotatef(-80.0,0,1,0);
-	fractal.myDraw();
-	glPopMatrix();
+	// glPushMatrix();
+	// glRotatef(-80.0,0,1,0);
+	// fractal.myDraw();
+	// glPopMatrix();
 
-	glPushMatrix();
-	glRotatef(180.0,0,1,0);
-	fractal.myDraw();
-	glPopMatrix();
+	// glPushMatrix();
+	// glRotatef(180.0,0,1,0);
+	// fractal.myDraw();
+	// glPopMatrix();
 
 
 	//--------------------------END Fractal VIEWPORT---------------------------
@@ -483,24 +560,4 @@ int main(int argc, char **argv)
 	glutMainLoop();
 
 	return 0;
-}
-
-int decision(char letter){
-	
-	if(letter=='b'){
-		return 0;	
-	}
-	else if(letter=='+'){
-		return 1;		
-	}
-	else if(letter=='-'){
-		return 2;
-	}
-	else if(letter=='['){
-		return 3;
-	}
-	else if(letter==']'){
-		// cout<<"FUUUUUUUU!!!!"<<endl;
-		return 4;
-	}
 }
