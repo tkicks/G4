@@ -11,4 +11,5 @@
  * ~~Make a myDrawFunction that draws in x-y plane and and can be rotated about y to draw more robust tree~~
  * Make leaf colors a pallete instead of random (increment a counter%numColors and choose color from list)
  * Find better angles for the copy-rotated parts of the tree.
- * ~~Un-comment exit(1) on invalid input so the program closes.~~
+ * Build tree from generatted grammer instead of const string.
+ * Un-comment exit(1) on invalid input so the program closes. (Do this shortly before submit)
