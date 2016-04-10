@@ -38,7 +38,7 @@ static GLUquadricObj *qobj;
 
 int strPos;
 
-const string sequence="bZb[Zbb]zbb";
+const string sequence="b-b[-b+b+b]+b-b-b";
 /*************************************************************/
 
 
@@ -56,7 +56,7 @@ public:
 	 void drawLeaf(); 
 	 void drawBranch();
 
-	 void zRotation();
+	 void zRotation(int direction);
 
 	 void drawVertical();
 	 void drawAngled(int direction);
@@ -99,8 +99,7 @@ void Tree::drawLeaf(){
 
 void Tree::drawBranch()
 {
-	// cout << "drawBranch()\n";
-
+	
 	glPushMatrix();
 		glColor3f(.545, .271, .075);
 		glRotatef(90.0,1.0,0.0,0.0);
@@ -109,7 +108,7 @@ void Tree::drawBranch()
 	//glFlush();
 }
 
-void Tree::zRotation(){
+void Tree::zRotation(int direction){
 
 	float xCoord,yCoord,xP,yP,fX,fY;
 
@@ -119,8 +118,8 @@ void Tree::zRotation(){
 	fX= currP[0];
 	fY= currP[1]+startY;
 
-	xP= xCoord*cos(angle) - yCoord*sin(angle) +(-1*fX*cos(angle)+fY*sin(angle));
-	yP= xCoord*sin(angle) + yCoord*cos(angle) +(-1*fX*sin(angle)-fY*cos(angle));
+	xP= xCoord*cos(direction*angle) - yCoord*sin(direction*angle) +(-1*fX*cos(direction*angle)+fY*sin(direction*angle));
+	yP= xCoord*sin(direction*angle) + yCoord*cos(direction*angle) +(-1*fX*sin(direction*angle)-fY*cos(direction*angle));
 
 
 	currP[0]+=xP;
@@ -147,7 +146,7 @@ void Tree::drawAngled(int direction){
 	glRotatef(direction*45.0,0,0,1);
 	glTranslatef(0.0,objHeight,0.0);
 	drawBranch();
-	zRotation();
+	zRotation(direction);
 	//If drawing a leaf next call drawLeaf here
 	glPopMatrix();
 
@@ -218,7 +217,6 @@ int Tree::makeTree(int operation){
 	}
 	else if(operation==2){
 		//4 is ] which means pop knot
-		cout<<strPos-1<<endl;
 		if(decision(sequence[strPos-1])==4){
 
 			//the char before the vert branch was a pop
@@ -466,10 +464,10 @@ int decision(char letter){
 	if(letter=='b'){
 		return 0;	
 	}
-	else if(letter=='Z'){
+	else if(letter=='+'){
 		return 1;		
 	}
-	else if(letter=='z'){
+	else if(letter=='-'){
 		return 2;
 	}
 	else if(letter=='['){

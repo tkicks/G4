@@ -8,20 +8,20 @@ Output: An openGL window displaying
 
 */
 
-using namespace std;
-
-// #include <stdio.h>
 #include <GL/glut.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <stack>
+#include <math.h>
 #include <pthread.h>
 GLenum rgb;					// for tkmap.c
 #include "tkmap.c"
 
-
 using namespace std;
+
+#define PI 3.14159265
 
 /************************Globals******************************/
 
@@ -29,44 +29,63 @@ static GLsizei width, height; // OpenGL window size.
 
 float z = 3.75;
 
+int strPos;
+
 static float Xangle = 0.0, Yangle = 0.0, Zangle = 0.0;
 static GLUquadricObj *qobj;
 
 const int maxZoom = 2;
 const int minZoom = -16;
 
+const string sequence="b-b[-b+b+b]+b-b-b";
 /*************************************************************/
 
 
 void* simpleFunc(void*) { return NULL; }
 void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, NULL); }
+int decision(char letter);
 
 class Tree{
 
 public:
 	 
-	 Tree () {objHeight = 0.2; objRadius = 0.05; angle = 0; n = 0; zoom = 0;};  // constructor
+	 Tree () {objHeight = 0.2; objRadius = 0.05; angle = 45*PI/180; n = 0; startY=-0.79; currP.push_back(0.0);currP.push_back(0);currP.push_back(0.0);};  // constructor
 
 	 void readIn(char* inFilename);
 	 void drawButtons(float x1, float y1, float buttonWidth, float buttonHeight);
 
-	 void drawLeaf(float centerX,float centerY,float centerZ);
-	 void drawTree();
+	 void drawLeaf();
 	 void drawBranch();
+
+	 void zRotation(int direction);
+	 
+	 void drawVertical();
+	 void drawAngled(int direction);
+
+	 void pushKnot();
+	 void popKnot();
+
+	 int makeTree(int operation);
+
 	 void growTree();
-	 void rotateObj(float omega, float x, float y, float z);
+	
 	 void createLabels();
 	 void writeLabels(float x, float y, const char label[]);
 	 float leafColor();			// randomly determine leaf color
 
 	 vector<string> grammars;
 	 vector<char> plant;
+	 vector<float>currP;
 	 float objHeight;    // height of cylinders (branches)
 	 float objRadius;    // radius of cylinders (branches)
 	 float angle;        // angle to rotate branches by
 	 int n;					// number of iterations
 	 int grammarNum;		// which grammar
 	 int zoom;
+
+	 float startY;   //Coords for the top of the first cylinder drawn (0,startY,0) so only need var for startY 
+
+	 stack<vector<float> > knots; //Coords for the places to pop back to
 };
 
 Tree fractal;
@@ -91,58 +110,168 @@ void Tree::readIn(char* inFilename){
 	}
 }
 
-void Tree::drawLeaf(float centerX,float centerY,float centerZ){
-	float colorLeaf = leafColor();
-	// cout << "drawLeaf()\n";
-	// cout << centerX << " " << centerY << " " << centerZ << endl;
+void Tree::drawLeaf(){
+		
+		float colorLeaf = leafColor();
+		//Remeber what Gousie said about overlapping leaves...have a pallete to choose from
+		if (colorLeaf == 0){
+			glColor3f (0.0, 1.0, 0.0);
+		}
+		else if (colorLeaf == 1){
+			glColor3f(1.0, 1.0, 0.0);
+		}
+		else if (colorLeaf == 2){
+			glColor3f(1.0, 0.6, 0.2);
+		}
 
-	//Remeber what Gousie said about overlapping leaves...have a pallete to choose from
-	if (colorLeaf == 0)
-		glColor3f (0.0, 1.0, 0.0);
-	else if (colorLeaf == 1)
-		glColor3f(1.0, 1.0, 0.0);
-	else if (colorLeaf == 2)
-		glColor3f(1.0, 0.6, 0.2);
-	
-	glBegin(GL_POLYGON);
-		glVertex3f(centerX-.05,centerY,centerZ);
-		glVertex3f(centerX,centerY+.1,centerZ);
-		glVertex3f(centerX+.05,centerY,centerZ);
-		glVertex3f(centerX,centerY-.1,centerZ);
-	glEnd();
+		glBegin(GL_POLYGON);
+		glVertex3f(-.05,0,0);
+		glVertex3f(0,0.1,0);
+		glVertex3f(0.05,0,0);
+		glVertex3f(0,-0.1,0);
+		glEnd();
 }
 
-void Tree::drawTree()
+
+void Tree::zRotation(int direction){
+
+	float xCoord,yCoord,xP,yP,fX,fY;
+
+	xCoord=currP[0];
+	yCoord=startY+currP[1]+objHeight;
+
+	fX= currP[0];
+	fY= currP[1]+startY;
+
+	xP= xCoord*cos(direction*angle) - yCoord*sin(direction*angle) +(-1*fX*cos(direction*angle)+fY*sin(direction*angle));
+	yP= xCoord*sin(direction*angle) + yCoord*cos(direction*angle) +(-1*fX*sin(direction*angle)-fY*cos(direction*angle));
+
+
+	currP[0]+=xP;
+	currP[1]+=yP;
+
+}
+
+void Tree::drawBranch()
 {
+	
+	glPushMatrix();
+		glColor3f(.545, .271, .075);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		gluCylinder(qobj, objRadius, objRadius, objHeight, 15.0, 5.0);
+	glPopMatrix();
+	glFlush();
+}
 
-	// for (int i = 0; i < plant.size(); i++)
-	// 	cout << plant[i];
-	// cout << endl;
-	float centerX, centerY, centerZ;
+void Tree::drawVertical(){
+	
+	glPushMatrix();
+	glTranslatef(0.0,objHeight,0.0);
+	glTranslatef(currP[0],currP[1],currP[2]);
+	drawBranch();
+	//If drawing a leaf next call drawLeaf here
+	glPopMatrix();
 
-	for (int i = 0; i < plant.size(); i++)
-	{
-		if (plant[i] == 'B')
-			drawBranch();
-		else if (plant[i] == 'L')
-			drawLeaf(centerX, centerY, centerZ);
-		else if (plant[i] == 'X')
-			rotateObj(angle, 1.0, 0.0, 0.0);
-		else if (plant[i] == 'x')
-			rotateObj(-angle, 1.0, 0.0, 0.0);
-		else if (plant[i] == 'Y')
-			rotateObj(angle, 0.0, 1.0, 0.0);
-		else if (plant[i] == 'y')
-			rotateObj(-angle, 0.0, 1.0, 0.0);
-		else if (plant[i] == 'Z')
-			rotateObj(angle, 0.0, 0.0, 1.0);
-		else if (plant[i] == 'z')
-			rotateObj(-angle, 0.0, 0.0, 1.0);
-		else if (plant[i] == '[')
-			cout << "pushMatrix()\n";
-		else if (plant[i] == ']')
-			cout << "popMatrix()\n";
+	currP[1]+=objHeight;
+}
+
+void Tree::drawAngled(int direction){
+	
+	glPushMatrix();
+	glTranslatef(currP[0],currP[1],currP[2]);
+	glRotatef(direction*45.0,0,0,1);
+	glTranslatef(0.0,objHeight,0.0);
+	drawBranch();
+	zRotation(direction);
+	//If drawing a leaf next call drawLeaf here
+	glPopMatrix();
+}
+
+void Tree::pushKnot(){
+
+	float knot[] = {currP[0],currP[1],currP[2]};
+
+	vector<float> temp (knot, knot + sizeof(knot) / sizeof(float) );
+
+	knots.push(temp);
+}
+
+void Tree::popKnot(){
+	
+	if(!knots.empty()){
+		vector<float> temp= knots.top(); 
+		knots.pop(); 
+
+		currP[0]=temp[0];
+		currP[1]=temp[1];
+		currP[2]=temp[2];
 	}
+
+}
+
+int Tree::makeTree(int operation){
+
+	int strInc;
+	if(operation==0){
+		// //Assumes first char in str is always a vert branch
+		//cout<<strPos<<endl;
+		if(strPos==0){
+			drawBranch();
+			currP[0]=currP[1]=currP[2]=0;	
+					
+		}
+		else{
+			//4 is ] which means pop knot
+			//cout<<decision(strPos-1)<<endl;
+			if(decision(sequence[strPos-1])==4){
+				//the char before the vert branch was a pop
+				popKnot();
+				drawVertical();
+
+			}	
+			else{
+				drawVertical();
+			}
+		
+		}
+		strInc=1;	
+	}	
+	else if(operation==1){		
+		//4 is ] which means pop knot
+		
+		if(decision(sequence[strPos-1])==4){
+			//For some reason unnkwon reason this is exeuting
+			popKnot();
+			drawAngled(1);
+		}
+		else{
+			drawAngled(1);
+		}
+		strInc=2;
+	}
+	else if(operation==2){
+		//4 is ] which means pop knot
+		if(decision(sequence[strPos-1])==4){
+
+			//the char before the vert branch was a pop
+			popKnot();
+			drawAngled(-1);
+		}
+		else{
+			drawAngled(-1);
+		}
+		strInc=2;	
+	}
+	else if(operation==3){
+		pushKnot();
+		strInc=1;
+	}
+	else if(operation==4){
+		strInc=1;
+	}
+
+	return strInc;
+
 }
 
 void Tree::growTree()
@@ -158,23 +287,6 @@ void Tree::growTree()
 		}
 		n += 1;
 	}
-}
-
-void Tree::rotateObj(float omega, float x, float y, float z)
-{
-	// cout << "rotateObj(" << omega << ", " << x << ", " << y << ", " << z << ")\n";
-}
-
-void Tree::drawBranch()
-{
-	// cout << "drawBranch()\n";
-
-	glPushMatrix();
-		glColor3f(.545, .271, .075);
-		glRotatef(90.0, 1.0, 0.0, 0.0);
-		gluCylinder(qobj, objRadius, objRadius, objHeight, 15.0, 5.0);
-	glPopMatrix();
-	glFlush();
 }
 
 void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight)
@@ -319,12 +431,14 @@ void drawScene(void)
 
 	glEnd();
 
-	fractal.drawTree();
-
-	// fractal.drawBranch();
-
-
-	// glutWireTeapot (0.7);
+	glTranslatef(0,-.99+fractal.objHeight,0);
+	strPos=0;
+	int a;
+	//cout<<"Hello?!??!!?"<<endl;
+	while(strPos<sequence.size()){
+		a=decision(sequence[strPos]);
+		strPos+=fractal.makeTree(a);
+	}
 
 	//--------------------------END Fractal VIEWPORT---------------------------
 
@@ -442,8 +556,8 @@ void mouse (int button, int state, int x, int y)
 		{
 			if (fractal.n == 0)
 				fractal.plant.push_back('B');
-			fractal.growTree();
-			fractal.drawTree();
+			// fractal.growTree();
+			// fractal.drawTree();
 		}
 		// clear
 		else if (x > (width*.7) & (x < (width*.8)) & (y > (height*.9) & y < (height*.97)))
@@ -524,4 +638,24 @@ int main(int argc, char **argv)
 	glutMainLoop();
 
 	return 0;
+}
+
+int decision(char letter){
+	
+	if(letter=='b'){
+		return 0;	
+	}
+	else if(letter=='+'){
+		return 1;		
+	}
+	else if(letter=='-'){
+		return 2;
+	}
+	else if(letter=='['){
+		return 3;
+	}
+	else if(letter==']'){
+		// cout<<"FUUUUUUUU!!!!"<<endl;
+		return 4;
+	}
 }
