@@ -68,6 +68,8 @@ public:
 	 int makeTree(int operation);
 
 	 void growTree();
+
+	 void myDraw();
 	
 	 void createLabels();
 	 void writeLabels(float x, float y, const char label[]);
@@ -289,6 +291,17 @@ void Tree::growTree()
 	}
 }
 
+void Tree::myDraw(){
+
+	int a;
+	strPos=0;
+	while(strPos<sequence.size()){
+		a=decision(sequence[strPos]);
+		strPos+=makeTree(a);
+	}
+
+}
+
 void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight)
 // draw menu buttons
 {
@@ -432,13 +445,21 @@ void drawScene(void)
 	glEnd();
 
 	glTranslatef(0,-.99+fractal.objHeight,0);
-	strPos=0;
-	int a;
-	//cout<<"Hello?!??!!?"<<endl;
-	while(strPos<sequence.size()){
-		a=decision(sequence[strPos]);
-		strPos+=fractal.makeTree(a);
-	}
+
+	glPushMatrix();
+	fractal.myDraw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-80.0,0,1,0);
+	fractal.myDraw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(180.0,0,1,0);
+	fractal.myDraw();
+	glPopMatrix();
+
 
 	//--------------------------END Fractal VIEWPORT---------------------------
 

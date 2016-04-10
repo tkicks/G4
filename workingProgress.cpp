@@ -38,7 +38,7 @@ static GLUquadricObj *qobj;
 
 int strPos;
 
-const string sequence="b-b[-b+b+b]+b-b-b";
+const string sequence="b+b[+bb]";
 /*************************************************************/
 
 
@@ -65,6 +65,8 @@ public:
 	 void popKnot();
 
 	 int makeTree(int operation);
+
+	 void myDraw();
 
 	 vector<string> grammars;
 	 vector<char> plant;
@@ -99,7 +101,7 @@ void Tree::drawLeaf(){
 
 void Tree::drawBranch()
 {
-	
+
 	glPushMatrix();
 		glColor3f(.545, .271, .075);
 		glRotatef(90.0,1.0,0.0,0.0);
@@ -240,6 +242,18 @@ int Tree::makeTree(int operation){
 
 }
 
+void Tree::myDraw(){
+
+	int a;
+	strPos=0;
+	//cout<<"Hello?!??!!?"<<endl;
+	while(strPos<sequence.size()){
+		a=decision(sequence[strPos]);
+		strPos+=makeTree(a);
+	}
+
+}
+
 void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight){
 	glColor3f(0.2, 0.2, 0.2);
 	glBegin(GL_POLYGON);
@@ -351,15 +365,27 @@ void drawScene(void)
 	//string sequence="bZb[Zbb]zbb";
 
 	glTranslatef(0,-.99+fractal.objHeight,0);
-	strPos=0;
-	int a;
-	//cout<<"Hello?!??!!?"<<endl;
-	while(strPos<sequence.size()){
-		a=decision(sequence[strPos]);
-		strPos+=fractal.makeTree(a);
-	}
+	//strPos=0;
+	//int a;
+	// cout<<"Hello?!??!!?"<<endl;
+	// while(strPos<sequence.size()){
+	// 	a=decision(sequence[strPos]);
+	// 	strPos+=fractal.makeTree(a);
+	// }
 
-	
+	glPushMatrix();
+	fractal.myDraw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-80.0,0,1,0);
+	fractal.myDraw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(180.0,0,1,0);
+	fractal.myDraw();
+	glPopMatrix();
 
 
 	//--------------------------END Fractal VIEWPORT---------------------------
