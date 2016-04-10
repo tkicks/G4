@@ -57,6 +57,7 @@ public:
 	 void rotateObj(float omega, float x, float y, float z);
 	 void createLabels();
 	 void writeLabels(float x, float y, const char label[]);
+	 float leafColor();			// randomly determine leaf color
 
 	 vector<string> grammars;
 	 vector<char> plant;
@@ -91,19 +92,24 @@ void Tree::readIn(char* inFilename){
 }
 
 void Tree::drawLeaf(float centerX,float centerY,float centerZ){
+	float colorLeaf = leafColor();
+	// cout << "drawLeaf()\n";
+	// cout << centerX << " " << centerY << " " << centerZ << endl;
 
-		// cout << "drawLeaf()\n";
-		// cout << centerX << " " << centerY << " " << centerZ << endl;
-
-		//Remeber what Gousie said about overlapping leaves...have a pallete to choose from
+	//Remeber what Gousie said about overlapping leaves...have a pallete to choose from
+	if (colorLeaf == 0)
 		glColor3f (0.0, 1.0, 0.0);
-		
-		glBegin(GL_POLYGON);
-			glVertex3f(centerX-.05,centerY,centerZ);
-			glVertex3f(centerX,centerY+.1,centerZ);
-			glVertex3f(centerX+.05,centerY,centerZ);
-			glVertex3f(centerX,centerY-.1,centerZ);
-		glEnd();
+	else if (colorLeaf == 1)
+		glColor3f(1.0, 1.0, 0.0);
+	else if (colorLeaf == 2)
+		glColor3f(1.0, 0.6, 0.2);
+	
+	glBegin(GL_POLYGON);
+		glVertex3f(centerX-.05,centerY,centerZ);
+		glVertex3f(centerX,centerY+.1,centerZ);
+		glVertex3f(centerX+.05,centerY,centerZ);
+		glVertex3f(centerX,centerY-.1,centerZ);
+	glEnd();
 }
 
 void Tree::drawTree()
@@ -214,6 +220,11 @@ void Tree::writeLabels(float x, float y, const char label[])
 	}
 
 	glFlush();	// draw
+}
+
+float Tree::leafColor()
+{
+	return (rand()%3);
 }
 
 /*****************************************************************/
@@ -497,6 +508,7 @@ void keyboard (unsigned char key, int x, int y)
 // Main routine.
 int main(int argc, char **argv) 
 {
+	srand(time(NULL));
 	char *filename = argv[1];
 	fractal.readIn(filename);
 	glutInit(&argc, argv);
