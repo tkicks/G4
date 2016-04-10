@@ -9,4 +9,4 @@
    * Currently would draw both branches at 45 degrees making a diagonal line instead of angled lines 
  * ~~Add in ability to draw leaves in drawTree method~~
  * ~~Make a myDrawFunction that draws in x-y plane and and can be rotated about y to draw more robust tree~~
- * Un-comment exit(1) on invalid input so the program closes.
+ * ~~Un-comment exit(1) on invalid input so the program closes.~~
