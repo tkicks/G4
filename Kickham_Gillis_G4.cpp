@@ -37,7 +37,7 @@ static GLUquadricObj *qobj;
 const int maxZoom = 2;
 const int minZoom = -16;
 
-const string sequence="b-b[-b+b+b]+b-b-b";
+const string sequence="bl-bl[-bl+bl+bl]+bl-bl-bl";
 /*************************************************************/
 
 
@@ -84,6 +84,7 @@ public:
 	 int n;					// number of iterations
 	 int grammarNum;		// which grammar
 	 int zoom;
+	 bool leafing;
 
 	 float startY;   //Coords for the top of the first cylinder drawn (0,startY,0) so only need var for startY 
 
@@ -113,7 +114,7 @@ void Tree::readIn(char* inFilename){
 }
 
 void Tree::drawLeaf(){
-		
+		cout << "leaf\n";
 		float colorLeaf = leafColor();
 		//Remeber what Gousie said about overlapping leaves...have a pallete to choose from
 		if (colorLeaf == 0){
@@ -132,6 +133,7 @@ void Tree::drawLeaf(){
 		glVertex3f(0.05,0,0);
 		glVertex3f(0,-0.1,0);
 		glEnd();
+		glFlush();
 }
 
 
@@ -172,6 +174,9 @@ void Tree::drawVertical(){
 	glTranslatef(currP[0],currP[1],currP[2]);
 	drawBranch();
 	//If drawing a leaf next call drawLeaf here
+	if (leafing)
+		drawLeaf();
+	leafing = false;
 	glPopMatrix();
 
 	currP[1]+=objHeight;
@@ -186,6 +191,9 @@ void Tree::drawAngled(int direction){
 	drawBranch();
 	zRotation(direction);
 	//If drawing a leaf next call drawLeaf here
+	if (leafing)
+		drawLeaf();
+	leafing = false;
 	glPopMatrix();
 }
 
@@ -271,6 +279,10 @@ int Tree::makeTree(int operation){
 	else if(operation==4){
 		strInc=1;
 	}
+	else if(operation==5){
+		// drawLeaf();
+		strInc=1;
+	}
 
 	return strInc;
 
@@ -316,7 +328,7 @@ void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight
 
 void Tree::createLabels()
 {
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(1.0, 0.0, 0.0);
 	writeLabels(-0.72, 0.6, "Grammar 1");
 	writeLabels(-0.12, 0.6, "Grammar 2");
 	writeLabels(0.48, 0.6, "Grammar 3");
@@ -385,27 +397,27 @@ void drawScene(void)
 
 	// drawButtons(x, y, width, height)
 	// grammar buttons
-	fractal.drawButtons((-width/750*.8), .8, .4, .4);
-	fractal.drawButtons((-width/750*.2), .8, .4, .4);
-	fractal.drawButtons((width/750*.4), .8, .4, .4);
-	// zoom buttons
-	fractal.drawButtons((-width/750*.8), .2, .2, .4);
-	fractal.drawButtons((-width/750*.8), -.4, .2, .4);
-	// x rotation buttons
-	fractal.drawButtons((-width/750*.5), .2, .2, .4);
-	fractal.drawButtons((-width/750*.5), -.4, .2, .4);
-	// y rotation buttons
-	fractal.drawButtons((-width/750*.2), .2, .2, .4);
-	fractal.drawButtons((-width/750*.2), -.4, .2, .4);
-	// z rotation buttons
-	fractal.drawButtons((width/750*.1), .2, .2, .4);
-	fractal.drawButtons((width/750*.1), -.4, .2, .4);
-	// grow button
-	fractal.drawButtons((width/750*.4), .2, .4, .4);
-	// clear button
-	fractal.drawButtons((width/750*.4), -.4, .2, .4);
-	// clear button
-	fractal.drawButtons((width/750*.65), -.4, .2, .4);
+	// fractal.drawButtons((-width/750*.8), .8, .4, .4);
+	// fractal.drawButtons((-width/750*.2), .8, .4, .4);
+	// fractal.drawButtons((width/750*.4), .8, .4, .4);
+	// // zoom buttons
+	// fractal.drawButtons((-width/750*.8), .2, .2, .4);
+	// fractal.drawButtons((-width/750*.8), -.4, .2, .4);
+	// // x rotation buttons
+	// fractal.drawButtons((-width/750*.5), .2, .2, .4);
+	// fractal.drawButtons((-width/750*.5), -.4, .2, .4);
+	// // y rotation buttons
+	// fractal.drawButtons((-width/750*.2), .2, .2, .4);
+	// fractal.drawButtons((-width/750*.2), -.4, .2, .4);
+	// // z rotation buttons
+	// fractal.drawButtons((width/750*.1), .2, .2, .4);
+	// fractal.drawButtons((width/750*.1), -.4, .2, .4);
+	// // grow button
+	// fractal.drawButtons((width/750*.4), .2, .4, .4);
+	// // clear button
+	// fractal.drawButtons((width/750*.4), -.4, .2, .4);
+	// // clear button
+	// fractal.drawButtons((width/750*.65), -.4, .2, .4);
 
 	// label buttons
 	fractal.createLabels();
@@ -678,5 +690,9 @@ int decision(char letter){
 	else if(letter==']'){
 		// cout<<"FUUUUUUUU!!!!"<<endl;
 		return 4;
+	}
+	else if(letter=='l'){
+		fractal.leafing = true;
+		return 5;
 	}
 }
