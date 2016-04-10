@@ -6,5 +6,8 @@ CFLAGS=		$(CPATHS)$(CLIBS)
 Kickham_Gillis_G4:		Kickham_Gillis_G4.cpp
 		g++ Kickham_Gillis_G4.cpp -o Kickham_Gillis_G4 $(CFLAGS)
 
+workingProgress:		workingProgress.cpp
+		g++ workingProgress.cpp -o workingProgress $(CFLAGS)
+
 clean:
 		rm *.o
