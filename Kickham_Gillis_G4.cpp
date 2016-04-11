@@ -28,7 +28,9 @@ using namespace std;
 
 static GLsizei width, height; // OpenGL window size.
 
-float z = 3.75;
+float xCam = 0.00;
+float yCam = 0.00;
+float zCam = 3.75;
 
 int strPos;
 
@@ -507,7 +509,7 @@ void drawScene(void)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity ();
 	glFrustum (-1, 1, -1, 1, 1.5, 20.0);
-	gluLookAt (0, 0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt (xCam, yCam, zCam, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 	glViewport(0, firstHeight, width, top);
 	glMatrixMode (GL_MODELVIEW);
@@ -601,7 +603,7 @@ void mouse (int button, int state, int x, int y)
 		{
 			if (fractal.zoom < maxZoom)
 			{
-				z -= 1;
+				zCam -= 1;
 				fractal.zoom += 1;
 				glutPostRedisplay ();
 			}
@@ -611,7 +613,7 @@ void mouse (int button, int state, int x, int y)
 		{
 			if (fractal.zoom > minZoom)
 			{
-				z += 1;
+				zCam += 1;
 				fractal.zoom -= 1;
 				glutPostRedisplay ();
 			}
@@ -674,7 +676,7 @@ void mouse (int button, int state, int x, int y)
 			fractal.plant.clear();
 			cout << fractal.plant.size() << endl;
 			fractal.n = 0;
-			z = 3.75;
+			zCam = 3.75;
 			fractal.zoom = 0;
 			glutPostRedisplay();
 		}
@@ -690,12 +692,12 @@ void mouse (int button, int state, int x, int y)
 void keyboard (unsigned char key, int x, int y)
 {
 	switch (key) {
-		case '8': z = z + 1;
-		cout << "z = " << z << endl;
+		case '8': zCam = zCam + 1;
+		cout << "z = " << zCam << endl;
 					 glutPostRedisplay ();
 					 break;
-		case '2': z = z - 1;
-		cout << "z = " << z << endl;
+		case '2': zCam = zCam - 1;
+		cout << "z = " << zCam << endl;
 					 glutPostRedisplay ();
 					 break;
 		case 'x': Xangle += 5.0;
