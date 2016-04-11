@@ -692,14 +692,6 @@ void mouse (int button, int state, int x, int y)
 void keyboard (unsigned char key, int x, int y)
 {
 	switch (key) {
-		case '8': zCam = zCam + 1;
-		cout << "z = " << zCam << endl;
-					 glutPostRedisplay ();
-					 break;
-		case '2': zCam = zCam - 1;
-		cout << "z = " << zCam << endl;
-					 glutPostRedisplay ();
-					 break;
 		case 'x': Xangle += 5.0;
 					 if (Xangle > 360.0) Xangle -= 360.0;
 					 glutPostRedisplay();
@@ -724,6 +716,13 @@ void keyboard (unsigned char key, int x, int y)
 					 if (Zangle < 0.0) Zangle += 360.0;
 					 glutPostRedisplay();
 					 break;
+		case 'r': xCam=yCam=0;
+				  zCam=3.75;
+				  glutPostRedisplay();
+				  break;
+		case 'R': Xangle=Yangle=Zangle=0;
+				  glutPostRedisplay();
+				  break;
 		case 'q': exit (1);
 	}
 }

@@ -40,7 +40,7 @@ static GLUquadricObj *qobj;
 
 int strPos;
 
-const string sequence="b-bl[-b+b+bl]+b-bl-b";
+const string sequence="b-b";
 /*************************************************************/
 
 
@@ -52,7 +52,7 @@ class Tree{
 
 public:
 	 
-	 Tree () {objHeight = 0.2; objRadius = 0.05; angle = 45*PI/180; n = 0; startY=-0.79; currP.push_back(0.0);currP.push_back(0);currP.push_back(0.0);};  // constructor
+	 Tree () {objHeight = 0.2; objRadius = 0.05; angle = 45*PI/180; degrees=0; n = 0; startY=-0.79; currP.push_back(0.0);currP.push_back(0);currP.push_back(0.0);};  // constructor
 
 	 void drawButtons(float x1, float y1, float buttonWidth, float buttonHeight);
 	 void drawLeaf(); 
@@ -61,7 +61,7 @@ public:
 	 void zRotation(int direction);
 
 	 int drawVertical(bool withLeaf);
-	 int drawAngled(int direction, bool withLeaf);
+	 int drawAngled(bool withLeaf, float add);
 
 	 void pushKnot();
 	 void popKnot();
@@ -79,6 +79,7 @@ public:
 	 float angle;        // angle to rotate branches by
 	 int n;					// number of iterations
 	 int grammarNum;		// which grammar
+	 float degrees;
 
 	 float startY;   //Coords for the top of the first cylinder drawn (0,startY,0) so only need var for startY 
 
@@ -152,13 +153,15 @@ int Tree::drawVertical(bool withLeaf){
 	return leafCount;
 }
 
-int Tree::drawAngled(int direction, bool withLeaf){
+int Tree::drawAngled(bool withLeaf, float add){
 	
+	degrees+=add;
+
 	int leafCount=0;
 
 	glPushMatrix();
 	glTranslatef(currP[0],currP[1],currP[2]);
-	glRotatef(direction*45.0,0,0,1);
+	glRotatef(degrees,0,0,1);
 	glTranslatef(0.0,objHeight,0.0);
 	drawBranch();
 
@@ -264,58 +267,58 @@ int Tree::makeTree(int operation){
 			popKnot();
 
 			if(strPos<sequence.size()-1){
-				extra=drawAngled(1,decision(sequence[strPos+2])==5);
+				extra=drawAngled(decision(sequence[strPos+2])==5,45);
 			}
 
 			else{
-				drawAngled(1,false);
+				drawAngled(false,45);
 			}
 			
 		}
 		else{
 			if(strPos<sequence.size()-1){
-				extra=drawAngled(1,decision(sequence[strPos+2])==5);
+				extra=drawAngled(decision(sequence[strPos+2])==5,45);
 			}
 
 			else{
-				drawAngled(1,false);
+				drawAngled(false,45);
 			}
 		}
 		strInc=2+extra;
 	}
-	else if(operation==2){
-		//4 is ] which means pop knot
-		if(decision(sequence[strPos-1])==4){
-			//For some reason unnkwon reason this is exeuting
-			popKnot();
+	// else if(operation==2){
+	// 	//4 is ] which means pop knot
+	// 	if(decision(sequence[strPos-1])==4){
+	// 		//For some reason unnkwon reason this is exeuting
+	// 		popKnot();
 
-			if(strPos<sequence.size()-1){
-				extra=drawAngled(-1,decision(sequence[strPos+2])==5);
-			}
+	// 		if(strPos<sequence.size()-1){
+	// 			extra=drawAngled(-1,decision(sequence[strPos+2])==5);
+	// 		}
 
-			else{
-				drawAngled(-1,false);
-			}
+	// 		else{
+	// 			drawAngled(-1,false);
+	// 		}
 			
-		}
-		else{
-			if(strPos<sequence.size()-1){
-				extra=drawAngled(-1,decision(sequence[strPos+2])==5);
-			}
+	// 	}
+	// 	else{
+	// 		if(strPos<sequence.size()-1){
+	// 			extra=drawAngled(-1,decision(sequence[strPos+2])==5);
+	// 		}
 
-			else{
-				drawAngled(-1,false);
-			}
-		}
-		strInc=2+extra;
-	}
-	else if(operation==3){
-		pushKnot();
-		strInc=1;
-	}
-	else if(operation==4){
-		strInc=1;
-	}
+	// 		else{
+	// 			drawAngled(-1,false);
+	// 		}
+	// 	}
+	// 	strInc=2+extra;
+	// }
+	// else if(operation==3){
+	// 	pushKnot();
+	// 	strInc=1;
+	// }
+	// else if(operation==4){
+	// 	strInc=1;
+	// }
 
 	return strInc;
 
