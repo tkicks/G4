@@ -718,6 +718,10 @@ void keyboard (unsigned char key, int x, int y)
 // Main routine.
 int main(int argc, char **argv) 
 {
+	if(argc!=2){
+		cout<<"Please specify one input file in the command line"<<endl;
+		exit(1);
+	}
 	printInstructions();
 	srand(time(NULL));
 	char *filename = argv[1];
