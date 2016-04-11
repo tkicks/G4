@@ -293,7 +293,7 @@ int Tree::makeTree(int operation){
 	}
 	else if(operation==6){
 		pushKnot();
-		glRotatef(-80.0,0,2,0);
+		glRotatef(-80.0,0,1,0);
 		strInc=1;
 	}
 	else if(operation==7){
@@ -312,7 +312,7 @@ int Tree::makeTree(int operation){
 
 void Tree::growTree()
 {
-	if (n < 5)
+	if (n < 55)
 	{
 		if (plant[plant.size()-1] == 'b' || plant[plant.size()-1] == 'l' || plant[plant.size()-1] == ']' || plant[plant.size()-1] == 'e')
 		{
@@ -625,7 +625,7 @@ void mouse (int button, int state, int x, int y)
 		// grow tree
 		else if (x > (width*.7) & (x < (width*.9)) & (y > (height*.8) & y < (height*.87)))
 		{
-			if (fractal.n < 5)
+			if (fractal.n < 55)
 			{
 				if (fractal.n == 0)
 					fractal.plant.push_back('b');
