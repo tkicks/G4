@@ -596,17 +596,17 @@ void mouse (int button, int state, int x, int y)
 		// rotate positive x
 		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.8) & y < (height*.87)))
 		{
-			// cameraX += 2.0;
+			cameraX += 2.0;
 			// gluLookAt(cameraX, cameraY, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-			Xangle += 5.0;
+			// Xangle += 5.0;
 			if (Xangle > 360.0) Xangle -= 360.0;
 			glutPostRedisplay();
 		}
 		// rotate negative x
 		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.9) & y < (height*.97)))
 		{
-			// cameraX -= 2.0;
-			Xangle -= 5.0;
+			cameraX -= 2.0;
+			// Xangle -= 5.0;
 			if (Xangle < 0.0) Xangle += 360.0;
 			glutPostRedisplay();
 		}
@@ -627,16 +627,16 @@ void mouse (int button, int state, int x, int y)
 		// rotate positive z
 		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.8) & y < (height*.87)))
 		{
-			// cameraY += 2.0;
-			Zangle += 5.0;
+			cameraY += 2.0;
+			// Zangle += 5.0;
 			if (Zangle > 360.0) Zangle -= 360.0;
 			glutPostRedisplay();
 		}
 		// rotate negative z
 		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.9) & y < (height*.97)))
 		{
-			// cameraY -= 2.0;
-			Zangle -= 5.0;
+			cameraY -= 2.0;
+			// Zangle -= 5.0;
 			if (Zangle < 0.0) Zangle += 360.0;
 			glutPostRedisplay();
 		}

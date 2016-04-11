@@ -50,8 +50,8 @@ using namespace std;
 
 static GLsizei width, height; // OpenGL window size.
 
-float cameraX = 0.0;
-float cameraY = 0.0;
+float xCam = 0.0;
+float yCam = 0.0;
 float z = 4.75;
 
 int strPos;
@@ -378,14 +378,25 @@ void Tree::createLabels()
 	writeLabels(-0.72, 0.6, "Grammar 1");
 	writeLabels(-0.12, 0.6, "Grammar 2");
 	writeLabels(0.48, 0.6, "Grammar 3");
+
 	writeLabels(-0.72, 0.0, "+");
 	writeLabels(-0.72, -0.6, "-");
-	writeLabels(-0.45, 0.0, "+X");
-	writeLabels(-0.45, -0.6, "-X");
-	writeLabels(-0.14, 0.0, "+Y");
-	writeLabels(-0.14, -0.6, "-Y");
-	writeLabels(0.16, 0.0, "+Z");
-	writeLabels(0.16, -0.6, "-Z");
+
+	writeLabels(-0.45, 0.0, "Cam");
+	writeLabels(-0.43, -0.1, "Up");
+	writeLabels(-0.45, -0.6, "Cam");
+	writeLabels(-0.46, -0.7, "Down");
+
+	writeLabels(-0.16, 0.0, "Cam");
+	writeLabels(-0.16, -0.1, "Right");
+	writeLabels(-0.16, -0.6, "Cam");
+	writeLabels(-0.16, -0.7, "Left");
+
+	writeLabels(0.14, 0.0, "Rotate");
+	writeLabels(0.15, -0.1, "Right");
+	writeLabels(0.14, -0.6, "Rotate");
+	writeLabels(0.15, -0.7, "Left");
+
 	writeLabels(0.53, 0.0, "Grow");
 	writeLabels(0.44, -0.6, "Clear");
 	writeLabels(0.7, -0.6, "Quit");
@@ -481,7 +492,7 @@ void drawScene(void)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity ();
 	glFrustum (-1, 1, -1, 1, 1.5, 20.0);
-	gluLookAt (cameraX, cameraY, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt (xCam, yCam, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 	glViewport(0, firstHeight, width, top);
 	glMatrixMode (GL_MODELVIEW);
@@ -704,11 +715,13 @@ void keyboard (unsigned char key, int x, int y)
 					 glutPostRedisplay();
 					 break;
 		case 'r': xCam=yCam=0;
-				  zCam=3.75;
+				  z=4.75;
 				  glutPostRedisplay();
+				  fractal.myDraw();
 				  break;
 		case 'R': Xangle=Yangle=Zangle=0;
 				  glutPostRedisplay();
+				  fractal.myDraw();
 				  break;
 		case 'q': exit (1);
 	}
