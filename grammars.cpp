@@ -492,17 +492,17 @@ void drawScene(void)
 	glRotatef(Yangle, 0.0, 1.0, 0.0);
 	glRotatef(Xangle, 1.0, 0.0, 0.0);
 
-	glColor3f (0.0, 0.0, 1.0);
+	// glColor3f (0.0, 0.0, 1.0);
 
 
-	glBegin(GL_POINTS);
+	// glBegin(GL_POINTS);
 
-		glVertex3f(-1,-1,0);
-		glVertex3f(1,1,0);
-		glVertex3f(-1,1,0);
-		glVertex3f(1,-1,0);
+	// 	glVertex3f(-1,-1,0);
+	// 	glVertex3f(1,1,0);
+	// 	glVertex3f(-1,1,0);
+	// 	glVertex3f(1,-1,0);
 
-	glEnd();
+	// glEnd();
 
 
 	//--------------------------END Fractal VIEWPORT---------------------------

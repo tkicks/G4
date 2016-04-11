@@ -8,21 +8,23 @@ Purpose: The purpose of this program is to utilize openGL to create a
 Input:	 The user will enter the name of a file while starting up the
 		 program (ie: ./Kickham_Gillis_G4 grammar.txt) and then use
 		 their mouse on the on-screen menu to:
-		 	Grammar 1/2/3: switch between which grammar to display
-		 	+/-: 		   zoom in/out up to a predetermined limit to always keep
-		 				   the plant in view
-		 	+X/Y/Z:		   rotate the plant positively around the x/y/z axis
-		 	-X/Y/Z:		   rotate the plant negatively around the x/y/z axis
-		 	Grow:		   grow the plant another iteration
-		 	Clear:		   clear the display, reset the camera, and start a new
-		 				   plant
-		 	Quit:		   exit the program
-		 or use the keyboard to:
-		 	x/y/z:		   rotate plant around the positive x/y/z axis
-		 	X/Y/Z:		   rotate plant around the negative x/y/z axis
-		 	r:             reset camera to default view
-		 	R:             reset plant rotation to 0
-		 	q:			   exit program
+		 	Grammar 1/2/3: 	   switch between which plant to display
+           	   				   (can be done anytime up to 10th iteration)
+			+:		   		   zoom in
+			-:		   		   zoom out
+			Cam Up/Down:	   move camera up/down
+			Cam Right/Left:    move camera right/left
+			Rotate Right/Left: rotate plant right/left
+			Grow: 	   	   	   grow the plant
+			Clear: 	   	   	   clear the plant and start again
+			Quit:	 	   	   exit the program
+		 or use their keyboard to:
+			x/y/z:		   	   rotate plant around the positive x/y/z axis
+			X/Y/Z:		   	   rotate plant around the negative x/y/z axis
+			r:                 reset camera to default view (click after to redraw plant)
+			R:                 reset total plant rotation to 0 degrees (click after to                         redraw plant)
+			q:	           	   exit program
+
 Output: The user will be shown a GUI that allows them to interact with a
 		visible menu with options described in Input above on the lower
 		portion of the display, as well as a display on the top portion
@@ -62,13 +64,13 @@ static GLUquadricObj *qobj;
 const int maxZoom = 3;
 const int minZoom = -14;
 
-const string sequence="bl-bl[-bl+bl+bl]+bl-bl-bl";
 /*************************************************************/
 
 
 void* simpleFunc(void*) { return NULL; }
 void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, NULL); }
 int decision(char letter);
+void printInstructions();
 
 class Tree{
 
@@ -127,7 +129,7 @@ void Tree::readIn(char* inFilename){
 	string line;
 	
 	if (inFile.is_open()) {
-		cout << "open\n";
+		cout << "\nSuccessfully opened file\n";
 		while ( getline (inFile,line) ){
 			grammars.push_back(line);
 		}
@@ -503,17 +505,17 @@ void drawScene(void)
 	glRotatef(Yangle, 0.0, 1.0, 0.0);
 	glRotatef(Xangle, 1.0, 0.0, 0.0);
 
-	glColor3f (0.0, 0.0, 1.0);
+	// glColor3f (0.0, 0.0, 1.0);
 
 
-	glBegin(GL_POINTS);
+	// glBegin(GL_POINTS);
 
-		glVertex3f(-1,-1,0);
-		glVertex3f(1,1,0);
-		glVertex3f(-1,1,0);
-		glVertex3f(1,-1,0);
+	// 	glVertex3f(-1,-1,0);
+	// 	glVertex3f(1,1,0);
+	// 	glVertex3f(-1,1,0);
+	// 	glVertex3f(1,-1,0);
 
-	glEnd();
+	// glEnd();
 
 
 	//--------------------------END Fractal VIEWPORT---------------------------
@@ -528,14 +530,6 @@ void setup(void)
 	glShadeModel (GL_FLAT);
 	glEnable (GL_DEPTH_TEST);
 	qobj = gluNewQuadric();
-
-	// terminal message
-	cout << "Welcome to Flowerly Fractal.  Press the buttons on the bottom of the screen to:\n";
-	cout << "Grammar 1/2/3 = switch between which plant to display\n";
-	cout << "            (can be done anytime up to 10th iteration)\n";
-	cout << "+ = zoom in\n- = zoom out\n+X/Y/Z = rotate plant positively on x/y/z axis\n";
-	cout << "-X/Y/Z = rotate plant neagatively on x/y/z axis\nGrow = grow the plant\n";
-	cout << "Clear = Clear the plant and start again\nQuit = exit the program\n";
 }
 
 // OpenGL window reshape routine.
@@ -604,51 +598,44 @@ void mouse (int button, int state, int x, int y)
 				glutPostRedisplay();
 			}
 		}
-		// rotate positive x
+		// move camera up
 		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.8) & y < (height*.87)))
 		{
-			// cameraX += 2.0;
-			// gluLookAt(cameraX, cameraY, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-			Xangle += 5.0;
-			if (Xangle > 360.0) Xangle -= 360.0;
+			yCam += 5.0;
 			glutPostRedisplay();
 		}
-		// rotate negative x
+		// move camera down
 		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.9) & y < (height*.97)))
 		{
-			// cameraX -= 2.0;
-			Xangle -= 5.0;
-			if (Xangle < 0.0) Xangle += 360.0;
+			yCam -= 5.0;
 			glutPostRedisplay();
 		}
-		// rotate positive y
+		// move camera right
 		else if (x > (width*.4) & (x < (width*.5)) & (y > (height*.8) & y < (height*.87)))
 		{
+			xCam += 5.0;
+			glutPostRedisplay();
+		}
+		// move camera left
+		else if (x > (width*.4) & (x < (width*.5)) & (y > (height*.9) & y < (height*.97)))
+		{
+			xCam -= 5.0;
+			glutPostRedisplay();
+		}
+		// rotate around y right
+		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.8) & y < (height*.87)))
+		{
+			// cameraY += 2.0;
 			Yangle += 5.0;
 			if (Yangle > 360.0) Yangle -= 360.0;
 			glutPostRedisplay();
 		}
-		// rotate negative y
-		else if (x > (width*.4) & (x < (width*.5)) & (y > (height*.9) & y < (height*.97)))
-		{
-			Yangle -= 5.0;
-			if (Yangle < 0.0) Yangle += 360.0;
-			glutPostRedisplay();
-		}
-		// rotate positive z
-		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.8) & y < (height*.87)))
-		{
-			// cameraY += 2.0;
-			Zangle += 5.0;
-			if (Zangle > 360.0) Zangle -= 360.0;
-			glutPostRedisplay();
-		}
-		// rotate negative z
+		// rotate around y left
 		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.9) & y < (height*.97)))
 		{
 			// cameraY -= 2.0;
-			Zangle -= 5.0;
-			if (Zangle < 0.0) Zangle += 360.0;
+			Yangle -= 5.0;
+			if (Yangle < 0.0) Yangle += 360.0;
 			glutPostRedisplay();
 		}
 		// grow tree
@@ -718,6 +705,7 @@ void keyboard (unsigned char key, int x, int y)
 				  z=4.75;
 				  glutPostRedisplay();
 				  fractal.myDraw();
+				  fractal.zoom = 0;
 				  break;
 		case 'R': Xangle=Yangle=Zangle=0;
 				  glutPostRedisplay();
@@ -730,6 +718,7 @@ void keyboard (unsigned char key, int x, int y)
 // Main routine.
 int main(int argc, char **argv) 
 {
+	printInstructions();
 	srand(time(NULL));
 	char *filename = argv[1];
 	fractal.readIn(filename);
@@ -781,3 +770,24 @@ int decision(char letter){
 		return 8;
 	}
 }
+
+void printInstructions(){
+	// terminal message
+	cout << "Welcome to Flowerly Fractal.  Press the buttons on the bottom of the screen to:\n";
+	cout << "Grammar 1/2/3: 	   switch between which plant to display\n";
+	cout << "           	   (can be done anytime up to 10th iteration)\n";
+	cout << "+:		   zoom in\n";
+	cout << "-:		   zoom out\n";
+	cout << "Cam Up/Down:	   move camera up/down\n";
+	cout << "Cam Right/Left:    move camera right/left\n";
+	cout << "Rotate Right/Left: rotate plant right/left\n";
+	cout << "Grow: 	   	   grow the plant\n";
+	cout << "Clear: 	   	   clear the plant and start again\n";
+	cout << "Quit:	 	   exit the program\n";
+	cout<<"x/y/z:		   rotate plant around the positive x/y/z axis"<<endl;
+	cout<<"X/Y/Z:		   rotate plant around the negative x/y/z axis"<<endl;
+	cout<<"r:                 reset camera to default view (click after to redraw plant)"<<endl;
+	cout<<"R:                 reset total plant rotation to 0 degrees (click after to                         redraw plant)"<<endl;
+	cout<<"q:	           exit program"<<endl;
+}
+
