@@ -18,10 +18,10 @@ Input:	 The user will enter the name of a file while starting up the
 		 				   plant
 		 	Quit:		   exit the program
 		 or use the keyboard to:
-		 	8:			   zoom out
-		 	2:			   zoom in
 		 	x/y/z:		   rotate plant around the positive x/y/z axis
 		 	X/Y/Z:		   rotate plant around the negative x/y/z axis
+		 	r:             reset camera to default view
+		 	R:             reset plant rotation to 0
 		 	q:			   exit program
 Output: The user will be shown a GUI that allows them to interact with a
 		visible menu with options described in Input above on the lower
