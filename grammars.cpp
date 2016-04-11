@@ -27,8 +27,8 @@ using namespace std;
 
 static GLsizei width, height; // OpenGL window size.
 
-float x = 0.0;
-float y = 0.0;
+float cameraX = 0.0;
+float cameraY = 0.0;
 float z = 4.75;
 
 int strPos;
@@ -312,7 +312,7 @@ int Tree::makeTree(int operation){
 
 void Tree::growTree()
 {
-	if (n < 55)
+	if (n < 10)
 	{
 		if (plant[plant.size()-1] == 'b' || plant[plant.size()-1] == 'l' || plant[plant.size()-1] == ']' || plant[plant.size()-1] == 'e')
 		{
@@ -353,7 +353,7 @@ void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight
 
 void Tree::createLabels()
 {
-	glColor3f(1.0, 0.0, 0.0);
+	glColor3f(1.0, 1.0, 1.0);
 	writeLabels(-0.72, 0.6, "Grammar 1");
 	writeLabels(-0.12, 0.6, "Grammar 2");
 	writeLabels(0.48, 0.6, "Grammar 3");
@@ -420,32 +420,34 @@ void drawScene(void)
 		
 	glEnd();
 
-	// drawButtons(x, y, width, height)
-	// grammar buttons
-	// fractal.drawButtons((-width/750*.8), .8, .4, .4);
-	// fractal.drawButtons((-width/750*.2), .8, .4, .4);
-	// fractal.drawButtons((width/750*.4), .8, .4, .4);
-	// // zoom buttons
-	// fractal.drawButtons((-width/750*.8), .2, .2, .4);
-	// fractal.drawButtons((-width/750*.8), -.4, .2, .4);
-	// // x rotation buttons
-	// fractal.drawButtons((-width/750*.5), .2, .2, .4);
-	// fractal.drawButtons((-width/750*.5), -.4, .2, .4);
-	// // y rotation buttons
-	// fractal.drawButtons((-width/750*.2), .2, .2, .4);
-	// fractal.drawButtons((-width/750*.2), -.4, .2, .4);
-	// // z rotation buttons
-	// fractal.drawButtons((width/750*.1), .2, .2, .4);
-	// fractal.drawButtons((width/750*.1), -.4, .2, .4);
-	// // grow button
-	// fractal.drawButtons((width/750*.4), .2, .4, .4);
-	// // clear button
-	// fractal.drawButtons((width/750*.4), -.4, .2, .4);
-	// // clear button
-	// fractal.drawButtons((width/750*.65), -.4, .2, .4);
-
 	// label buttons
 	fractal.createLabels();
+
+	// drawButtons(x, y, width, height)
+	// grammar buttons
+	fractal.drawButtons((-width/750*.8), .8, .4, .4);
+	fractal.drawButtons((-width/750*.2), .8, .4, .4);
+	fractal.drawButtons((width/750*.4), .8, .4, .4);
+	// zoom buttons
+	fractal.drawButtons((-width/750*.8), .2, .2, .4);
+	fractal.drawButtons((-width/750*.8), -.4, .2, .4);
+	// x rotation buttons
+	fractal.drawButtons((-width/750*.5), .2, .2, .4);
+	fractal.drawButtons((-width/750*.5), -.4, .2, .4);
+	// y rotation buttons
+	fractal.drawButtons((-width/750*.2), .2, .2, .4);
+	fractal.drawButtons((-width/750*.2), -.4, .2, .4);
+	// z rotation buttons
+	fractal.drawButtons((width/750*.1), .2, .2, .4);
+	fractal.drawButtons((width/750*.1), -.4, .2, .4);
+	// grow button
+	fractal.drawButtons((width/750*.4), .2, .4, .4);
+	// clear button
+	fractal.drawButtons((width/750*.4), -.4, .2, .4);
+	// clear button
+	fractal.drawButtons((width/750*.65), -.4, .2, .4);
+
+	
 
 	//--------------------------END MENU VIEWPORT---------------------------
 
@@ -458,7 +460,7 @@ void drawScene(void)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity ();
 	glFrustum (-1, 1, -1, 1, 1.5, 20.0);
-	gluLookAt (0, 0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt (cameraX, cameraY, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 	glViewport(0, firstHeight, width, top);
 	glMatrixMode (GL_MODELVIEW);
@@ -581,15 +583,16 @@ void mouse (int button, int state, int x, int y)
 		// rotate positive x
 		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.8) & y < (height*.87)))
 		{
-			x += 1.0;
-			gluLookAt(x, y, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-			// Xangle += 5.0;
-			// if (Xangle > 360.0) Xangle -= 360.0;
+			// cameraX += 2.0;
+			// gluLookAt(cameraX, cameraY, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+			Xangle += 5.0;
+			if (Xangle > 360.0) Xangle -= 360.0;
 			glutPostRedisplay();
 		}
 		// rotate negative x
 		else if (x > (width*.25) & (x < (width*.35)) & (y > (height*.9) & y < (height*.97)))
 		{
+			// cameraX -= 2.0;
 			Xangle -= 5.0;
 			if (Xangle < 0.0) Xangle += 360.0;
 			glutPostRedisplay();
@@ -611,6 +614,7 @@ void mouse (int button, int state, int x, int y)
 		// rotate positive z
 		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.8) & y < (height*.87)))
 		{
+			// cameraY += 2.0;
 			Zangle += 5.0;
 			if (Zangle > 360.0) Zangle -= 360.0;
 			glutPostRedisplay();
@@ -618,6 +622,7 @@ void mouse (int button, int state, int x, int y)
 		// rotate negative z
 		else if (x > (width*.55) & (x < (width*.65)) & (y > (height*.9) & y < (height*.97)))
 		{
+			// cameraY -= 2.0;
 			Zangle -= 5.0;
 			if (Zangle < 0.0) Zangle += 360.0;
 			glutPostRedisplay();
@@ -625,7 +630,7 @@ void mouse (int button, int state, int x, int y)
 		// grow tree
 		else if (x > (width*.7) & (x < (width*.9)) & (y > (height*.8) & y < (height*.87)))
 		{
-			if (fractal.n < 55)
+			if (fractal.n < 10)
 			{
 				if (fractal.n == 0)
 					fractal.plant.push_back('b');
