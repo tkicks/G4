@@ -31,7 +31,9 @@ using namespace std;
 
 static GLsizei width, height; // OpenGL window size.
 
-float z = 3.75;
+float zCam = 3.75;
+float yCam = 0.00;
+float xCam = 0.00;
 
 static float Xangle = 0.0, Yangle = 0.0, Zangle = 0.0;
 static GLUquadricObj *qobj;
@@ -407,7 +409,7 @@ void drawScene(void)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity ();
 	glFrustum (-1, 1, -1, 1, 1.5, 20.0);
-	gluLookAt (0, 0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt (xCam, yCam, zCam, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 	glViewport(0, firstHeight, width, top);
 	glMatrixMode (GL_MODELVIEW);
@@ -508,12 +510,10 @@ void mouse (int button, int state, int x, int y)
 void keyboard (unsigned char key, int x, int y)
 {
 	switch (key) {
-		case '8': z = z + 1;
-		cout << "z = " << z << endl;
+		case '8': xCam = xCam + .1;
 					 glutPostRedisplay ();
 					 break;
-		case '2': z = z - 1;
-		cout << "z = " << z << endl;
+		case '2': xCam = xCam - .1;
 					 glutPostRedisplay ();
 					 break;
 		case 'x': Xangle += 5.0;

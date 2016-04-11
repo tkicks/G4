@@ -3,7 +3,7 @@
 ## To-Do List
 
 
- * Add change camera x and y button and functionality
+ * Add change camera x and y button ~~and functionality~~
  * Come up with 3 different grammars
  * Fix rotation so it's cumulative (+b+b second branch should be drawn 45 degrees to first)
    * Currently would draw both branches at 45 degrees making a diagonal line instead of angled lines 
