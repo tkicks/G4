@@ -778,7 +778,7 @@ void printInstructions(){
 	cout<<"x/y/z:		   rotate plant around the positive x/y/z axis"<<endl;
 	cout<<"X/Y/Z:		   rotate plant around the negative x/y/z axis"<<endl;
 	cout<<"r:                 reset camera to default view (click after to redraw plant)"<<endl;
-	cout<<"R:                 reset total plant rotation to 0 degrees (click after to                         redraw plant)"<<endl;
+	cout<<"R:                 reset total plant rotation to 0 degrees (click after to redraw plant)"<<endl;
 	cout<<"q:	           exit program"<<endl;
 }
 
