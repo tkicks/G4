@@ -1,1 +1,4 @@
-bl-bl[-bl+bl+bl]+bl-bl-bl
+b[+bl[-l+l]][-b[+l]l]b
+b[+bl]-b[l][-b+b+b[l]][+b]-b-b[l]b
+b[+bl]b[-bl]b
+b[-l-l+l-l+l+l-l+l+l]
