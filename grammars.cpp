@@ -2,9 +2,32 @@
 
 Names: Austin Gillis Tyler Kickham
 Program Name: Assignment G4- Flowerly Fractal
-Purpose: The purpose of this program is to utilize openGL to 
-Input:
-Output: An openGL window displaying
+Purpose: The purpose of this program is to utilize openGL to create a
+		 fractal of a plant created using up to 3 different grammars read
+		 in from a file
+Input:	 The user will enter the name of a file while starting up the
+		 program (ie: ./Kickham_Gillis_G4 grammars.txt) and then use
+		 their mouse on the on-screen menu to:
+		 	Grammar 1/2/3: switch between which grammar to display
+		 	+/-: 		   zoom in/out up to a predetermined limit to always keep
+		 				   the plant in view
+		 	+X/Y/Z:		   rotate the plant positively around the x/y/z axis
+		 	-X/Y/Z:		   rotate the plant negatively around the x/y/z axis
+		 	Grow:		   grow the plant another iteration
+		 	Clear:		   clear the display, reset the camera, and start a new
+		 				   plant
+		 	Quit:		   exit the program
+		 or use the keyboard to:
+		 	8:			   zoom out
+		 	2:			   zoom in
+		 	x/y/z:		   rotate plant around the positive x/y/z axis
+		 	X/Y/Z:		   rotate plant around the negative x/y/z axis
+		 	q:			   exit program
+Output: The user will be shown a GUI that allows them to interact with a
+		visible menu with options described in Input above on the lower
+		portion of the display, as well as a display on the top portion
+		of the display a plant (after growing at least once) which will
+		be shown differently based on the options chosen.
 
 */
 
@@ -329,14 +352,12 @@ void Tree::growTree()
 }
 
 void Tree::myDraw(){
-
 	int a;
 	strPos=0;
 	while(strPos<plant.size()){
 		a=decision(plant[strPos]);
 		strPos+=makeTree(a);
 	}
-
 }
 
 void Tree::drawButtons(float x1, float y1, float buttonWidth, float buttonHeight)
@@ -483,22 +504,6 @@ void drawScene(void)
 
 	glEnd();
 
-	// glTranslatef(0,-.99+fractal.objHeight,0);
-
-	// glPushMatrix();
-	// fractal.myDraw();
-	// glPopMatrix();
-
-	// glPushMatrix();
-	// glRotatef(-80.0,0,1,0);
-	// fractal.myDraw();
-	// glPopMatrix();
-
-	// glPushMatrix();
-	// glRotatef(180.0,0,1,0);
-	// fractal.myDraw();
-	// glPopMatrix();
-
 
 	//--------------------------END Fractal VIEWPORT---------------------------
 
@@ -512,6 +517,14 @@ void setup(void)
 	glShadeModel (GL_FLAT);
 	glEnable (GL_DEPTH_TEST);
 	qobj = gluNewQuadric();
+
+	// terminal message
+	cout << "Welcome to Flowerly Fractal.  Press the buttons on the bottom of the screen to:\n";
+	cout << "Grammar 1/2/3 = switch between which plant to display\n";
+	cout << "            (can be done anytime up to 10th iteration)\n";
+	cout << "+ = zoom in\n- = zoom out\n+X/Y/Z = rotate plant positively on x/y/z axis\n";
+	cout << "-X/Y/Z = rotate plant neagatively on x/y/z axis\nGrow = grow the plant\n";
+	cout << "Clear = Clear the plant and start again\nQuit = exit the program\n";
 }
 
 // OpenGL window reshape routine.
@@ -536,7 +549,7 @@ void mouse (int button, int state, int x, int y)
 		// grammar 1
 		if (x > (width*.1) & (x < (width*.3)) & (y > (height*.7) & y < (height*.77)))
 		{
-			if (fractal.n < 5)
+			if (fractal.n < 10)
 			{
 				fractal.grammarNum = 0;
 				fractal.angle = 45;
@@ -545,7 +558,7 @@ void mouse (int button, int state, int x, int y)
 		// grammar 2
 		else if (x > (width*.4) & (x < (width*.6)) & (y > (height*.7) & y < (height*.77)))
 		{
-			if (fractal.n < 5)
+			if (fractal.n < 10)
 			{
 				fractal.grammarNum = 1;
 				fractal.angle = 25.7;
@@ -554,7 +567,7 @@ void mouse (int button, int state, int x, int y)
 		// grammar 3
 		else if (x > (width*.7) & (x < (width*.9)) & (y > (height*.7) & y < (height*.77)))
 		{
-			if (fractal.n < 5)
+			if (fractal.n < 10)
 			{
 				fractal.grammarNum = 2;
 				fractal.angle = 20;
@@ -655,7 +668,7 @@ void mouse (int button, int state, int x, int y)
 		// quit
 		else if (x > (width*.83) & (x < (width*.925)) & (y > (height*.9) & y < (height*.97)))
 		{
-			cout << "Quiting Flowerly Fractal\n";
+			cout << "Quitting Flowerly Fractal\n";
 			exit (1);
 		}
 	}
