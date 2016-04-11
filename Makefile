@@ -9,5 +9,8 @@ Kickham_Gillis_G4:		Kickham_Gillis_G4.cpp
 workingProgress:		workingProgress.cpp
 		g++ workingProgress.cpp -o workingProgress $(CFLAGS)
 
+grammars:		grammars.cpp
+		g++ grammars.cpp -o grammars $(CFLAGS)
+
 clean:
 		rm *.o
