@@ -62,13 +62,13 @@ static GLUquadricObj *qobj;
 const int maxZoom = 3;
 const int minZoom = -14;
 
-const string sequence="bl-bl[-bl+bl+bl]+bl-bl-bl";
 /*************************************************************/
 
 
 void* simpleFunc(void*) { return NULL; }
 void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, NULL); }
 int decision(char letter);
+void printInstructions();
 
 class Tree{
 
@@ -703,8 +703,8 @@ void keyboard (unsigned char key, int x, int y)
 					 if (Zangle < 0.0) Zangle += 360.0;
 					 glutPostRedisplay();
 					 break;
-		case 'r': xCam=yCam=0;
-				  zCam=3.75;
+		case 'r': cameraX=cameraY=0;
+				  z=3.75;
 				  glutPostRedisplay();
 				  break;
 		case 'R': Xangle=Yangle=Zangle=0;
@@ -717,6 +717,7 @@ void keyboard (unsigned char key, int x, int y)
 // Main routine.
 int main(int argc, char **argv) 
 {
+	printInstructions();
 	srand(time(NULL));
 	char *filename = argv[1];
 	fractal.readIn(filename);
@@ -768,3 +769,12 @@ int decision(char letter){
 		return 8;
 	}
 }
+
+void printInstructions(){
+			cout<<"\nx/y/z:		   rotate plant around the positive x/y/z axis"<<endl;
+		 	cout<<"X/Y/Z:		   rotate plant around the negative x/y/z axis"<<endl;
+		 	cout<<"r:                 reset camera to default view"<<endl;
+		 	cout<<"R:                 reset total plant rotation to 0"<<endl;
+		 	cout<<"q:	           exit program"<<endl;
+}
+
